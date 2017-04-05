@@ -6,10 +6,10 @@ rm -rf dist || exit 0;
 mkdir dist;
 
 lein clean
-lein with-profile prod cljsbuild once
 
 sass src/sass/index.scss:resources/public/css/site.css --style compressed --no-cache
 
+lein with-profile prod cljsbuild once ui
 
 # go to the out directory and create a *new* Git repo
 cd resources/public
