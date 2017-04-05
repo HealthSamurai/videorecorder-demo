@@ -7,6 +7,7 @@ mkdir dist;
 
 # run our compile script, discussed above
 lein cljsbuild once
+sass src/sass/index.scss:resources/public/css/site.css --style compressed --no-cache
 
 
 # go to the out directory and create a *new* Git repo
