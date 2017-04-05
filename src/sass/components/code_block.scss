@@ -1,0 +1,30 @@
+.code-block {
+  code {
+    max-height: 80vh;
+    overflow: auto;
+  }
+
+  .code-editor {
+    .CodeMirror {
+      height: auto;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .cm-s-neo.CodeMirror {
+      line-height: 1.3;
+      background-color: #fafafa;
+      box-shadow: 0 0 0 1px $color-red;
+      height: auto;
+
+      .CodeMirror-lines {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+    }
+  }
+}
+
+.hljs {
+  background: $color-lightgray;
+}

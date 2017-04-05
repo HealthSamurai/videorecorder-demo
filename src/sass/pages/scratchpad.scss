@@ -1,0 +1,27 @@
+section.scratchpad-page {
+    /* .code-editor { */
+    /*   position: absolute; */
+    /*   left: 0; */
+    /*   top: 12rem; */
+    /*   right: 0; */
+    /*   bottom: 0; */
+    /*   background-color: #fff; */
+
+    /*   .CodeMirror { */
+    /*     padding-top: 0; */
+    /*     padding-bottom: 0; */
+    /*     width: 980px; */
+    /*     margin: 0 auto; */
+    /*     height: 100%; */
+    /*   } */
+    /* } */
+
+    .CodeMirror {
+        padding: 1rem;
+        height: auto;
+    }
+
+    // article.markdown {
+    //     margin: 0 1rem;
+    // }
+}

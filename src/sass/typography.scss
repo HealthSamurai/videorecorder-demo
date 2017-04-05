@@ -1,0 +1,132 @@
+html {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.3px;
+  color: $color-almostblack;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+a {
+  color: $color-blue;
+  text-decoration: underline;
+
+  &:hover {
+    color: darken($color-blue, 10%);
+  }
+
+  &:visited {
+    color: $color-blue;
+  }
+
+  &:active {
+    color: $color-red;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  margin-bottom: 0.5em;
+  color: $color-almostblack;
+
+  &:not(:first-child) {
+    margin-top: 1em;
+  }
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+p, li, code.block {
+  line-height: 1.7;
+}
+
+p, ul, ol, code.block {
+  margin-bottom: 1rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+ul {
+  list-style-type: disc;
+  padding-left: 1.2rem;
+}
+
+ol {
+  list-style-type: decimal;
+  padding-left: 1.2rem;
+}
+
+mark {
+  background-color: $color-lightyellow;
+  padding: .2rem;
+}
+
+small {
+  font-size: 85%;
+  font-weight: 400;
+}
+
+code {
+  font-family: 'Iconsolata', monospace;
+  background-color: $color-gray;
+  border: 1px solid $color-darkgray;
+
+  &.block {
+    white-space: pre;
+    display: block;
+    padding: 1rem;
+    border: none;
+  }
+
+  &.block:not([class*=hljs]) {
+    background-color: inherit;
+    color: inherit;
+    border: none;
+  }
+}
+
+kbd {
+  -moz-border-radius:3px;
+  -moz-box-shadow:0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+  -webkit-border-radius:3px;
+  -webkit-box-shadow:0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+
+  background-color:#f7f7f7;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow:0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
+  display: inline-block;
+  margin:0 .2rem;
+  padding:.1rem .6rem;
+  text-shadow:0 1px 0 #fff;
+}
+
+strong {
+  font-weight: 600;
+}
+
+em {
+  font-style: italic;
+}
+
+.muted {
+  color: $color-verydarkgray;
+}
+
+.fa {
+  font-size: 1.2rem;
+  vertical-align: -0.1rem;
+}
+
+.monospace, pre {
+  font-family: 'Iconsolata', monospace;
+}

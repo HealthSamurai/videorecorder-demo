@@ -1,0 +1,149 @@
+$radio-and-checkbox-size: 1.5rem;
+
+input.input, textarea.input, select.select {
+  width: 100%;
+  outline: none;
+  font-size: inherit;
+  line-height: 1.5;
+  padding: 0.3rem;
+  border: 2px solid $color-darkgray;
+  border-radius: 5px;
+  height: 2.5rem;
+
+  &:focus:not(.error):not(.disabled) {
+    border-color: $color-blue;
+    box-shadow: 0 0 10px -2px rgba($color-blue, .75);
+  }
+
+  &.error {
+    border-color: $color-red;
+    color: $color-red;
+
+    &:focus {
+      box-shadow: 0 0 10px -2px rgba($color-red, .75);
+    }
+  }
+
+  &.disabled, &[disabled] {
+    cursor: not-allowed;
+    background-color: $color-lightgray;
+    color: $color-darkgray;
+  }
+}
+
+textarea {
+  font-family: 'Iconsolata', monospace;
+}
+
+label {
+  font-weight: 600;
+  color: $color-almostblack;
+  user-select: none;
+
+  &.radio, &.checkbox {
+    line-height: 1.5rem;
+    cursor: pointer;
+  }
+}
+
+input.radio, input.checkbox {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  display: inline-block;
+  border: 2px solid $color-darkgray;
+  width: $radio-and-checkbox-size;
+  height: $radio-and-checkbox-size;
+  margin: 0;
+  padding: 0;
+  vertical-align: bottom;
+  outline: none;
+  margin-right: 0.5rem;
+  transition: all 0.2s ease-in;
+  cursor: pointer;
+
+  &:after {
+    opacity: 0;
+    display: block;
+    margin: 0 auto;
+    transition: all 0.2s ease-in;
+  }
+
+  &:checked {
+    border-color: $color-blue;
+    background-color: transparent;
+
+    &:after {
+      opacity: 1;
+    }
+  }
+
+  &[disabled] {
+    background-color: $color-lightgray;
+    border-color: $color-darkgray;
+
+    &:after {
+      color: $color-darkgray;
+    }
+  }
+}
+
+input.radio {
+  border-radius: 50%;
+
+  &:after {
+    content: '';
+    margin-top: 2px;
+    width: calc(#{$radio-and-checkbox-size} - 8px);
+    height: calc(#{$radio-and-checkbox-size} - 8px);
+    border-radius: 50%;
+    background-color: $color-blue;
+  }
+
+  &[disabled] {
+    &:after {
+      background-color: $color-darkgray;
+    }
+  }
+}
+
+input.checkbox {
+  border-radius: 5px;
+
+  &:after {
+    content: '\2715';
+    font-size: 1.1rem;
+    font-weight: 900;
+    line-height: 1.1;
+    text-align: center;
+    color: $color-blue;
+  }
+}
+
+.form-row {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: inline-block;
+  }
+
+  & > p.hint, label span.hint {
+    font-size: 85%;
+    color: $color-verydarkgray;
+  }
+
+  .input-wrapper {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    label.radio, label.checkbox {
+      display: block;
+      margin-bottom: 0.7rem;
+
+      span.hint {
+        font-weight: 400;
+        display: block;
+        margin-left: $radio-and-checkbox-size + 0.5rem;
+      }
+    }
+  }
+}
