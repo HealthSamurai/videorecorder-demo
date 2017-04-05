@@ -7,8 +7,8 @@
 (defonce recorder (atom nil))
 (defonce state (r/atom {}))
 
-(def chunks (r/atom #js[]))
-(def videos (r/atom []))
+(defonce chunks (r/atom #js[]))
+(defonce videos (r/atom []))
 
 (defn do-start-recording [stream]
   (let [id (name (gensym))
@@ -31,10 +31,9 @@
     (aset video "srcObject" stream)
     (aset  video "onloadedmetadata" (fn [e] (.play video)))))
 
-
 (defn start-recording []
   (.getUserMedia js/navigator
-                 #js{:audio true :video #js{:width 1280 :height 720}}
+                 #js{:audio false :video true}
                  do-start-recording
                  (fn [err] (.log js/console err))))
 
@@ -63,17 +62,24 @@
         [:video {:id "video"}]
         [:div.buttons
          (if (= :in-progress phase)
-           [:button.stop  {:title "stop recording" :on-click stop-recording} "Stop"]
+           [:button.stop  {:title "stop recording" :on-click stop-recording}]
            [:button.start {:title "start recording" :on-click start-recording}])]]
 
-       [:pre (pr-str phase)]
-
+       [:br]
+       [:br]
        [:div
-        [:h3 "Videos"]
-        (for [vs @videos]
-          [:div.item {:key (:id vs)}
-           [:b (:id vs)] "  " (str (:ts vs))
-           [:video {:src (:url vs) :controls true}]])]])))
+        [:h3 "Recorded Videos"]
+        [:div.videos
+         (for [vs @videos]
+           [:div.item {:key (:id vs)}
+            [:video.preview {:src (:url vs) :controls true}]
+            [:div.desc
+             [:h5 "Record " (str (:ts vs))]
+             [:div "Size: "(pr-str (/ (.-size (:blob vs)) 1000000))  "Mb"]
+             [:div "Size: "(pr-str  (:blob vs))]
+             [:button.btn.btn-secondary "Download"]
+
+             ]])]]])))
 
 (defmethod page/page :config
   [k]

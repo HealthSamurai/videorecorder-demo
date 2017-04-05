@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="18px" viewBox="0 0 15 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>Run</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M13.282778,0.244947957 C14.2284443,-0.316541398 14.9950583,0.119206967 14.9950583,1.22570352 L14.9950586,16.2308602 C14.9950586,17.3340059 14.2233454,17.7700774 13.2827783,17.2116157 L0.707338797,9.74494802 C-0.238327493,9.18345863 -0.233228245,8.27007679 0.707338757,7.71161513 L13.282778,0.244947957 Z" id="path-1"></path>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="14.9950586" height="17.4546132" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <use id="Run" stroke="#666666" mask="url(#mask-2)" stroke-width="4" transform="translate(7.497529, 8.727307) rotate(-180.000000) translate(-7.497529, -8.727307) " xlink:href="#path-1"></use>
+    </g>
+</svg>

@@ -32,6 +32,23 @@ section.video-page {
         border: 1px solid #ddd;
         display: block;
     } 
+    .videos {
+        margin-top: 1em;
+        margin-bottom: 20em;
+        .item {
+            border-top: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .preview {
+            height: 200px;
+            display: inline-block;
+        }
+        .desc {
+            display: inline-block;
+            vertical-align: top;
+            margin-left: 2em;
+        }
+    }
     #recorder {
         position: relative;
         .buttons {

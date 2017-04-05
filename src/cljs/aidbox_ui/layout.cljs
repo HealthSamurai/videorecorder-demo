@@ -75,5 +75,5 @@
      [:footer
       [:div.footer-wrapper
        [:div.left
-        [:p "Aidbox v0.16 (c55e3fd)"]
+        [:p "Hearth Smart"]
         [:p (cc/raw-html "Hand-crafted with <span style='color: #e3647e'>&hearts;</span> by ") [:a {:href "http://health-samurai.io/"} "Health Samurai Team"]]]]]]))
