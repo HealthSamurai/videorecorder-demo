@@ -74,9 +74,7 @@
                            :output-dir "resources/public/js/out"
                            :source-map true
                            :optimizations :none
-                           :pretty-print  true
-                           :foreign-libs []
-                           :externs []}}}}}
+                           :pretty-print  true}}}}}
 
              :prod {:source-paths ["src/cljs" "src/clj"]
                     :cljsbuild

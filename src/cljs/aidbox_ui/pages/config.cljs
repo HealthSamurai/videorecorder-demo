@@ -5,7 +5,8 @@
 
 (defonce video-stream (atom nil))
 (defonce recorder (atom nil))
-(defonce state (r/atom {:time 0}))
+(defonce state (r/atom {:time 0
+                        :devices []}))
 
 (defonce chunks (r/atom #js[]))
 (defonce videos (r/atom []))
@@ -14,7 +15,28 @@
                   (when (= :in-progress (:phase @state))
                     (swap! state update :time inc))) 1000)
 
+;; navigator.mediaDevices.enumerateDevices()
+;; .then(function(devices) {
+;; devices.forEach(function(device) {
+;; console.log(device.kind + ": " + device.label +
+;; " id = " + device.deviceId);
+;; });
+;; })
+
+(defn load-devices []
+  (swap! state assoc :devices [])
+  (-> (.-mediaDevices js/navigator )
+      (.enumerateDevices)
+      (.then (fn [device]
+               (.log js/console device)
+               (swap! state update :devices concat device)))))
+
+(defn select-device [d]
+  (.log js/console "select device" d)
+  (swap! state assoc :selected-device d))
+
 (defn do-start-recording [stream]
+  (.log js/console "Stream" stream)
   (let [id (name (gensym))
         rec (js/MediaRecorder. stream)]
     (doseq [ev ["onstop" "onstart" "onpause" "onresume" "onerror" "onwarning"]]
@@ -38,10 +60,14 @@
     (aset  video "onloadedmetadata" (fn [e] (.play video)))))
 
 (defn start-recording []
-  (.getUserMedia js/navigator
-                 #js{:audio false :video true}
-                 do-start-recording
-                 (fn [err] (.log js/console err))))
+  (let [d (:selected-device @state)
+        constr  #js{:audio false
+                    :video #js{:deviceId (if-let [id (and d (.-deviceId d))] #js{:exact id} nil)}}]
+    (.log js/console "Media constr" constr)
+    (.getUserMedia js/navigator
+                   constr 
+                   do-start-recording
+                   (fn [err] (.log js/console "getUserMedia ERROR" err)))))
 
 (defn stop-recording []
   (when-let [rec @recorder]
@@ -61,16 +87,27 @@
   (println "replay"))
 
 (defn config []
+  (load-devices)
   (fn []
-    (let [phase (:phase @state)]
+    (let [phase (:phase @state)
+          current-dev (:selected-device @state)]
       [:section.video-page
-       [:div#recorder
-        [:video {:id "video"}]
-        [:div.buttons
-         [:div.timer (:time @state) " sec"]
-         (if (= :in-progress phase)
-           [:button.stop  {:title "stop recording" :on-click stop-recording} "Stop Recording"]
-           [:button.start {:title "start recording" :on-click start-recording} "Start Recording"])]]
+       [:h4 "Choose Device"]
+       [:div.devices
+        (for [d (:devices @state)]
+          [:div.device {:key (str (.-deviceId d) (.-kind d))
+                        :class (when (= d current-dev) "active")
+                        :on-click #(select-device d)}
+           (.-label d)
+           "  "
+           (.-kind d)])
+        [:div#recorder
+         [:video {:id "video"}]
+         [:div.buttons
+          [:div.timer (:time @state) " sec"]
+          (if (= :in-progress phase)
+            [:button.stop  {:title "stop recording" :on-click stop-recording} "Stop Recording"]
+            [:button.start {:title "start recording" :on-click start-recording} "Start Recording"])]]]
 
        [:br]
        [:br]

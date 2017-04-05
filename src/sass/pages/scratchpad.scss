@@ -49,6 +49,24 @@ section.video-page {
             margin-left: 2em;
         }
     }
+    .devices {
+        margion: 10px 0;
+        .device {
+            padding: 10px;
+            display: inline-block;
+            border: 1px solid #ddd;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            cursor: pointer;
+
+            &.active {
+                background: #777;
+                color:white;
+            }
+            
+        }
+        
+    }
     #recorder {
         position: relative;
         .buttons {
@@ -78,13 +96,12 @@ section.video-page {
                 min-width: 40px;
                 min-width: 40px;
                 height: 40px;
+                color: white;
                 border: none;
                 outline: none;
                 background: #555;
                 cursor: pointer;
-                &:hover {
-                    background: green;
-                }
+                background: green;
             }
             .stop {
                 display: inline-block;
@@ -93,6 +110,7 @@ section.video-page {
                 font-size: 15px;
                 min-width: 40px;
                 height: 40px;
+                color: white;
                 border: none;
                 outline: none;
                 background: red; 
