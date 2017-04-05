@@ -25,3 +25,52 @@ section.scratchpad-page {
     //     margin: 0 1rem;
     // }
 }
+
+section.video-page {
+    #video {
+        width: 100%;
+        border: 1px solid #ddd;
+        display: block;
+    } 
+    #recorder {
+        position: relative;
+        .buttons {
+            position: absolute;
+            bottom:0;
+            height: 50px;
+            background: #ddd;
+            color: white;
+            opacity: 0.7;
+            left: 0;
+            padding: 10px;
+            right: 0;
+            text-align: center;
+            .start {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: none;
+                outline: none;
+                background: #555;
+                cursor: pointer;
+                &:hover {
+                    background: green;
+                }
+            }
+            .stop {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: none;
+                outline: none;
+                background: red; 
+                cursor: pointer;
+                &:hover {
+                    background: red;
+                }
+            }
+        }
+    }
+}

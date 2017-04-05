@@ -45,9 +45,9 @@
      [:header
       [:div.header-wrapper
        [:div.topbar
-        [:div.boxname "box"]
+        [:div.boxname "Heart Smart"]
 
-        [:input.search.input {:type "search" :placeholder "Smart Search"} ]
+        ;; [:input.search.input {:type "search" :placeholder "Smart Search"} ]
 
         [:div.notifications
          (cc/raw-html "&nbsp;") ;; we need this space to position icons properly (it's a hack)

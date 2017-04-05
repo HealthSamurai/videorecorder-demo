@@ -60,8 +60,7 @@
                                   [pjstadig/humane-test-output "0.8.1"]]
 
                    :source-paths ["src/cljs" "src/clj" "env/dev/clj"]
-                   :plugins [[lein-figwheel "0.5.10-SNAPSHOT"]
-                             ]
+                   :plugins [[lein-figwheel "0.5.10-SNAPSHOT"]]
 
                    :env {:dev true}
 
@@ -76,17 +75,8 @@
                            :source-map true
                            :optimizations :none
                            :pretty-print  true
-
-                           :foreign-libs [{:file "resources/public/vendor/codemirror/codemirror.js"
-                                           :provides ["vendor.codemirror"]}
-                                          {:file "resources/public/vendor/markdownit/markdown-it.js"
-                                           :provides ["vendor.markdownit"]}
-                                          {:file "resources/public/vendor/highlight-js/highlight.js"
-                                           :provides ["vendor.highlightjs"]}]
-
-                           :externs ["resources/public/vendor/codemirror/externs.js"
-                                     "resources/public/vendor/highlight-js/externs.js"
-                                     "resources/public/vendor/markdownit/markdown-it-externs.js"]}}}}}
+                           :foreign-libs []
+                           :externs []}}}}}
 
              :prod {:source-paths ["src/cljs" "src/clj"]
                     :cljsbuild

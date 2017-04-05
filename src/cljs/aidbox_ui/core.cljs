@@ -18,14 +18,11 @@
    [re-frame.core :as rf]
    [aidbox-ui.pages.page :as page]
    [aidbox-ui.pages.config]
-   [aidbox-ui.pages.resources]
-   [aidbox-ui.pages.scratchpad]
-   [aidbox-ui.pages.toolkit]
-   [aidbox-ui.pages.boxes]
    [aidbox-ui.openid :as openid]
    [aidbox-ui.cookies :as cookies]
    [devtools.core :as devtools])
   (:import goog.History))
+
 
 (devtools/install!)
 

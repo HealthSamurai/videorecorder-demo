@@ -5,6 +5,7 @@
 
 (defonce video-stream (atom nil))
 (defonce recorder (atom nil))
+(defonce state (r/atom {}))
 
 (def chunks (r/atom #js[]))
 (def videos (r/atom []))
@@ -15,6 +16,7 @@
     (doseq [ev ["onstop" "onstart" "onpause" "onresume" "onerror" "onwarning"]]
       (aset rec ev (fn [& args] (.log js/console ev id args))))
 
+    (swap! state assoc :phase :in-progress)
     (reset! chunks #js[])
     (aset rec "ondataavailable" (fn [ev]
                                   (.log js/console id "data")
@@ -39,6 +41,7 @@
 (defn stop-recording []
   (when-let [rec @recorder]
     (.log js/console "on stop" rec)
+    (swap! state assoc :phase :idle)
     (.stop rec)
     (let [chks @chunks
           blob (js/Blob. chks #js{:type "video/mp4" });; "video/webm"
@@ -54,23 +57,23 @@
 
 (defn config []
   (fn []
-    [:section.video-page
-     [:style "
-       video { border: 1px solid #ddd; display: block;}
-       .item {padding: 10px; border-bottom: 1px solid #ddd;}
-       .item:hover {background: #ddd; cursor: pointer;}
-     "]
-     [:video {:id "video"}]
-     [:div.overlay "overlay"]
-     [:button.btn.btn-primary {:on-click start-recording} "Start"]
-     [:button.btn.btn-primary {:on-click stop-recording} "Stop"]
+    (let [phase (:phase @state)]
+      [:section.video-page
+       [:div#recorder
+        [:video {:id "video"}]
+        [:div.buttons
+         (if (= :in-progress phase)
+           [:button.stop  {:title "stop recording" :on-click stop-recording} "Stop"]
+           [:button.start {:title "start recording" :on-click start-recording}])]]
 
-     [:div
-      [:h3 "Videos"]
-      (for [vs @videos]
-        [:div.item {:key (:id vs)}
-         [:b (:id vs)] "  " (str (:ts vs))
-         [:video {:src (:url vs) :controls true}]])]]))
+       [:pre (pr-str phase)]
+
+       [:div
+        [:h3 "Videos"]
+        (for [vs @videos]
+          [:div.item {:key (:id vs)}
+           [:b (:id vs)] "  " (str (:ts vs))
+           [:video {:src (:url vs) :controls true}]])]])))
 
 (defmethod page/page :config
   [k]
