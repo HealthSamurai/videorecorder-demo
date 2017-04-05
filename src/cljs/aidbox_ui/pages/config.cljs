@@ -84,8 +84,6 @@
              [:h5 "Record " (str (:ts vs))]
              [:div "Size: "(pr-str (/ (.-size (:blob vs)) 1000000))  "Mb"]
 
-             [:div "Size: "(pr-str  (:blob vs))]
-
              [:a.download {:href (:url vs) :download "video.mp4"} "Download"]
 
              ]])]]])))
