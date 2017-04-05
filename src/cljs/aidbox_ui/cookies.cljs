@@ -1,8 +1,6 @@
 (ns aidbox-ui.cookies
   (:refer-clojure :exclude [get set!])
-  (:require-macros [cljs.core.async.macros :as m :refer [go alt!]])
   (:require [goog.net.cookies :as gcookies]
-            [cljs.core.async :as a]
             [re-frame.core :as rf]
             [cljs.reader :as reader]))
 
@@ -15,8 +13,7 @@
 (defn remove! [k] (.remove goog.net.cookies (name k)))
 
 (defn watch-expires [k f]
-  (go (loop []
-        (a/<! (a/timeout 500))
+  #_(go (loop []
         (println "WATCH" k  (get-cookie k))
         (if-not (get-cookie k)
           (f)

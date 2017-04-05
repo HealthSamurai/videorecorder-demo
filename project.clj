@@ -13,7 +13,7 @@
                  [re-frisk "0.4.4" :exclusions [cljsjs/react]]
                  [binaryage/devtools "0.9.2"]
                  [hiccup "1.0.5"]
-                 [cljs-http "0.1.42"]
+                 ;; [cljs-http "0.1.42"]
                  [route-map "0.0.4"]]
 
   :plugins [[lein-environ "1.1.0"]
@@ -84,7 +84,7 @@
                      {:ui {:source-paths ["src/cljs" "env/prod/cljs"]
                            :compiler
                            {:main "aidbox-ui.prod"
-                            :asset-path "/js/out"
+                            :asset-path "js/out"
                             :foreign-libs [{:file "resources/public/vendor/codemirror/codemirror.js"
                                             :provides ["vendor.codemirror"]}
                                            {:file "resources/public/vendor/markdownit/markdown-it.js"
@@ -98,5 +98,5 @@
 
                             :output-to "resources/public/js/ui.js"
                             :output-dir "resources/public/js/out"
-                            :optimizations :none
+                            :optimizations :advanced
                             :pretty-print  false}}}}}})
