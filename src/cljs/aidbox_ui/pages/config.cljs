@@ -50,8 +50,7 @@
                           :id (name (gensym))}))))
 
 (defn replay-recording []
-  (println "replay")
-  )
+  (println "replay"))
 
 (defn config []
   (fn []
