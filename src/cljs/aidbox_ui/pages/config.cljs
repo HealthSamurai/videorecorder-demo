@@ -69,8 +69,8 @@
         [:div.buttons
          [:div.timer (:time @state) " sec"]
          (if (= :in-progress phase)
-           [:button.stop  {:title "stop recording" :on-click stop-recording}]
-           [:button.start {:title "start recording" :on-click start-recording}])]]
+           [:button.stop  {:title "stop recording" :on-click stop-recording} "Start Recording"]
+           [:button.start {:title "start recording" :on-click start-recording} "Stop Recording"])]]
 
        [:br]
        [:br]
