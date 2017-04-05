@@ -5,10 +5,14 @@
 
 (defonce video-stream (atom nil))
 (defonce recorder (atom nil))
-(defonce state (r/atom {}))
+(defonce state (r/atom {:time 0}))
 
 (defonce chunks (r/atom #js[]))
 (defonce videos (r/atom []))
+
+(js/setInterval (fn []
+                  (when (= :in-progress (:phase @state))
+                    (swap! state update :time inc))) 1000)
 
 (defn do-start-recording [stream]
   (let [id (name (gensym))
@@ -17,6 +21,8 @@
       (aset rec ev (fn [& args] (.log js/console ev id args))))
 
     (swap! state assoc :phase :in-progress)
+    (swap! state assoc :time 0)
+
     (reset! chunks #js[])
     (aset rec "ondataavailable" (fn [ev]
                                   (.log js/console id "data")
@@ -43,7 +49,7 @@
     (swap! state assoc :phase :idle)
     (.stop rec)
     (let [chks @chunks
-          blob (js/Blob. chks #js{:type "video/mp4" });; "video/webm"
+          blob (js/Blob. chks #js{:type "video/webm" });; "video/webm"
           url (.createObjectURL (.-URL js/window) blob)]
       (.log js/console blob "Number of chunks" (count chks))
       (swap! videos conj {:blob blob
@@ -61,6 +67,7 @@
        [:div#recorder
         [:video {:id "video"}]
         [:div.buttons
+         [:div.timer (:time @state) " sec"]
          (if (= :in-progress phase)
            [:button.stop  {:title "stop recording" :on-click stop-recording}]
            [:button.start {:title "start recording" :on-click start-recording}])]]
@@ -76,8 +83,10 @@
             [:div.desc
              [:h5 "Record " (str (:ts vs))]
              [:div "Size: "(pr-str (/ (.-size (:blob vs)) 1000000))  "Mb"]
+
              [:div "Size: "(pr-str  (:blob vs))]
-             [:button.btn.btn-secondary "Download"]
+
+             [:a.download {:href (:url vs) :download "video.mp4"} "Download"]
 
              ]])]]])))
 

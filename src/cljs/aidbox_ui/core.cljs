@@ -24,7 +24,7 @@
   (:import goog.History))
 
 
-(devtools/install!)
+;; (devtools/install!)
 
 ;; (rf/reg-event-fx
 ;;  ::initialize
@@ -75,5 +75,5 @@
   (println "init")
   ;; (rf/dispatch [::initialize])
   (hook-browser-navigation!)
-  (enable-re-frisk!)
+  ;; (enable-re-frisk!)
   (mount-root))

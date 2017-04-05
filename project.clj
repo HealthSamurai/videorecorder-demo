@@ -66,7 +66,7 @@
 
                    :cljsbuild
                    {:builds
-                    {:ui {:source-paths ["src/cljs" "src/clj" "env/dev/cljs"]
+                    {:ui {:source-paths ["src/cljs" "env/dev/cljs"]
                           :compiler
                           {:main "aidbox-ui.dev"
                            :asset-path "/js/out"
@@ -81,7 +81,7 @@
              :prod {:source-paths ["src/cljs" "src/clj"]
                     :cljsbuild
                     {:builds
-                     {:ui {:source-paths ["src/cljs" "src/clj" "env/prod/cljs"]
+                     {:ui {:source-paths ["src/cljs" "env/prod/cljs"]
                            :compiler
                            {:main "aidbox-ui.prod"
                             :asset-path "/js/out"
@@ -98,5 +98,5 @@
 
                             :output-to "resources/public/js/ui.js"
                             :output-dir "resources/public/js/out"
-                            :optimizations :advanced
+                            :optimizations :none
                             :pretty-print  false}}}}}})
