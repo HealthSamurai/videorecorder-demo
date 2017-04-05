@@ -84,6 +84,7 @@
                      {:ui {:source-paths ["src/cljs" "src/clj" "env/prod/cljs"]
                            :compiler
                            {:main "aidbox-ui.prod"
+                            :asset-path "/js/out"
                             :foreign-libs [{:file "resources/public/vendor/codemirror/codemirror.js"
                                             :provides ["vendor.codemirror"]}
                                            {:file "resources/public/vendor/markdownit/markdown-it.js"

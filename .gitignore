@@ -3,3 +3,4 @@ figwheel_server.log
 target
 .nrepl-port
 resources/public/js/out
+resources/public/js/ui.js
