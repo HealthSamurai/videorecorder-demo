@@ -23,7 +23,6 @@
   (-> (.-mediaDevices js/navigator )
       (.enumerateDevices)
       (.then (fn [device]
-               (.log js/console device)
                (swap! state update :devices concat (.filter device #(= "videoinput" (.-kind %))))))))
 
 
@@ -51,17 +50,17 @@
        (mapv (fn [x] (assoc x :text (name (:id x)))))))
 
 (defn build-rtc-config [cfg]
-  (.log js/console cfg)
   (clj->js
-   {:mimeType (str "video/webm;codecs=" (:id (:codec cfg)))
-    :videoBitsPerSecond (:id (:bit-rate cfg))
-    :frameInterval (:id (:frame-rate cfg))
-    :resolution (dissoc (:resolution cfg) :id :text)
-    ;; canvas doues not mean resolution - it's video canvas
-    ;; :canvas {:width (:minWidth (:resolution cfg))
-    ;;          :height (:minHeight (:resolution cfg))}
-    })
-  )
+   (cond->
+       {:mimeType (str "video/webm;codecs=" (or (:id (:codec cfg)) "h264"))
+        ;; :resolution (dissoc (:resolution cfg) :id :text)
+        ;; canvas doues not mean resolution - it's video canvas
+        ;; :canvas {:width (:minWidth (:resolution cfg))
+        ;;          :height (:minHeight (:resolution cfg))}
+        }
+
+     (:bit-rate cfg) (assoc :videoBitsPerSecond (:id (:bit-rate cfg)))
+     (:frame-rate cfg) (assoc :frameInterval (:id (:frame-rate cfg))))))
 
 (defn do-start-recording [stream]
   (reset! astream stream)
@@ -101,8 +100,6 @@
 
 (defn replay-recording []
   (println "replay"))
-
-
 
 (defn radio-group [args]
   (let [do-selection (fn [x path]
