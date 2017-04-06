@@ -20,32 +20,17 @@
    [aidbox-ui.pages.config]
    [aidbox-ui.openid :as openid]
    [aidbox-ui.cookies :as cookies]
+   [media-fx.core :as media]
    [devtools.core :as devtools])
   (:import goog.History))
 
 
 ;; (devtools/install!)
 
-;; (rf/reg-event-fx
-;;  ::initialize
-;;  [(rf/inject-cofx ::cookies/get :auth)
-;;   (rf/inject-cofx ::openid/jwt :auth)]
-;;  (fn [{jwt :jwt {auth :auth} :cookie :as cofx}
-;;       [_ ev]]
-;;    (println "here")
-;;    (if (and (nil? jwt) (nil? auth))
-;;      {::fxs/page-redirect {:uri "/oauth2"
-;;                            :params {:redirect_uri (first (str/split (.. js/window -location -href) #"#"))}}}
-;;      {::cookies/set {:key :auth
-;;                      :value (or jwt auth)}
-;;       :db           (merge (:db cofx)
-;;                            {:flag  ev
-;;                             :auth (or jwt auth)
-;;                             :top-menu [[:boxes "#/boxes" "Boxes"]
-;;                                        [:scratchpad "#/" "Interactive Documets"]
-;;                                        [:resources "#/resources" "Resources"]
-;;                                        [:config "#/config" "Configuration"]]
-;;                             :spinners-state {}})})))
+(rf/reg-event-fx
+ ::initialize
+ [] (fn [cofx [_ ev]] cofx))
+
 
 (defn current-page []
   (let [p @(rf/subscribe [::db/current-page])]
@@ -64,6 +49,7 @@
 (defn- dispatch [event]
   (let [fragment (.-token event)
         route (route-map/match [:. fragment] routes/routes)]
+    (println "routing" route)
     (rf/dispatch [:navigate-to {:page (:match route)
                                 :params (:params route)}])))
 
@@ -73,7 +59,7 @@
 
 (defn init! []
   (println "init")
-  ;; (rf/dispatch [::initialize])
+  (rf/dispatch [::initialize])
   (hook-browser-navigation!)
-  ;; (enable-re-frisk!)
+  (enable-re-frisk!)
   (mount-root))

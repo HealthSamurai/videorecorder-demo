@@ -26,7 +26,6 @@
 (rf/reg-fx
  ::page-redirect
  (fn [opts]
-   (println "REDIRECT" opts)
    (page-redirect (str (:uri opts)
                        (when-let [params (:params opts)]
                          (->> params

@@ -3,7 +3,4 @@
             [re-frame.core :as rf]))
 
 (def routes
-  {"resources" {:. :resources}
-   "boxes"     {:. :boxes}
-   :.          {:. :config}
-   "toolkit"    {:. :config}})
+  {:.      {:. :config}})
