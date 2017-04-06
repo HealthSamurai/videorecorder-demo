@@ -47,6 +47,7 @@
              (:label d) "  " (:kind d)])]
          [media/video {:stream  (:stream @media)}]]))))
 
+
 (defmethod page/page :sample
   [k]
   [config])

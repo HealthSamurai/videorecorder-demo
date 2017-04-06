@@ -42,7 +42,7 @@
   (let [user @(rf/subscribe [::db/auth])]
     [:div#aidbox-root
      icons
-     [:header
+     #_[:header
       [:div.header-wrapper
        [:div.topbar
         [:div.boxname "Heart Smart"]

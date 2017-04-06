@@ -13,13 +13,13 @@
    [goog.events :as events]
    [goog.history.EventType :as EventType]
    [aidbox-ui.rf :refer [reg-event-db]]
-   [aidbox-ui.routes :as routes]
    [route-map.core :as route-map]
    [re-frame.core :as rf]
    [aidbox-ui.pages.page :as page]
    [aidbox-ui.pages.config]
    [aidbox-ui.openid :as openid]
    [aidbox-ui.cookies :as cookies]
+   [aidbox-ui.sample]
    [media-fx.core :as media]
    [devtools.core :as devtools])
   (:import goog.History))
@@ -46,9 +46,13 @@
  (fn [db [k event]]
    (assoc db :current-page event)))
 
+(def routes
+  {:.      {:. :config}
+   "sample" {:. :sample}})
+
 (defn- dispatch [event]
   (let [fragment (.-token event)
-        route (route-map/match [:. fragment] routes/routes)]
+        route (route-map/match [:. fragment] routes)]
     (println "routing" route)
     (rf/dispatch [:navigate-to {:page (:match route)
                                 :params (:params route)}])))

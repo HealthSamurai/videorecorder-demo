@@ -50,20 +50,25 @@ section.video-page {
         }
     }
     .devices {
-        margion: 10px 0;
+        margin: 10px 0;
+        .label {
+            padding: 10px;
+            display: inline-block;
+            width: 10em;
+            text-align: right;
+        }
         .device {
             padding: 10px;
             display: inline-block;
             border: 1px solid #ddd;
-            margin-right: 4px;
             margin-bottom: 4px;
             cursor: pointer;
+            margin-left: -1px;
 
             &.active {
-                background: #777;
-                color:white;
+                background: #2d89ef;
+                color: white;
             }
-            
         }
         
     }
