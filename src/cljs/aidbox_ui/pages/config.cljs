@@ -108,6 +108,12 @@
           (if (= :in-progress phase)
             [:button.stop  {:title "stop recording" :on-click stop-recording} "Stop Recording"]
             [:button.start {:title "start recording" :on-click start-recording} "Start Recording"])]]]
+       [:div
+        [:h3 "Compression"]
+        [:div "h...."]
+        [:h3 "Resolution"]
+        [:h3 "Frame Rate"]
+        [:h3 "Bit Rate"]]
 
        [:br]
        [:br]
