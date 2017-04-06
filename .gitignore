@@ -4,3 +4,5 @@ target
 .nrepl-port
 resources/public/js/out
 resources/public/js/ui.js
+.cljs_rhino_repl/
+.lein-repl-history
