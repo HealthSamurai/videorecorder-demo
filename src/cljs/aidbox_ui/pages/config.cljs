@@ -29,7 +29,7 @@
       (.enumerateDevices)
       (.then (fn [device]
                (.log js/console device)
-               (swap! state update :devices concat device)))))
+               (swap! state update :devices concat (.filter device #(= "videoinput" (.-kind %))))))))
 
 (defn select-device [d]
   (.log js/console "select device" d)
