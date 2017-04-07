@@ -76,13 +76,15 @@
     (swap! state merge  {:phase :in-progress :time 0})))
 
 (defn start-recording []
-  (let [d (:value (:selected-device @state))
-        cfg (:selected @state)
+  (let [cfg (:selected @state)
+        d (:device cfg)
         constr  (clj->js
                   (cond-> {:audio false
-                           :video {:deviceId (if-let [id (and d (.-deviceId d))] #js{:exact id} nil)}}
+                           :video {:deviceId (if-let [id (and d (:id d))] {:exact id} nil)}}
                     (:resolution cfg) (assoc-in [:video :mandatory] (dissoc (:resolution cfg) :id :text))))]
     (.log js/console "Media constr" constr)
+    (.warn js/console  (clj->js d))
+
     (.getUserMedia js/navigator
                    constr
                    do-start-recording
@@ -125,13 +127,13 @@
 (defn settings []
   [:div.settings
    [:section.video-page
-    [:pre {:style {:float "right"}}
+    #_[:pre {:style {:float "right"}}
      (.stringify js/JSON (build-rtc-config (:selected @state)) nil " ")]
     [radio-group {:title "Choose Device"
                   :path [:selected :device]
                   :opts (->> (:devices @state)
                              (mapv (fn [d]
-                                     {:id (str (.-deviceId d) (.-kind d))
+                                     {:id (.-deviceId d)
                                       :text (if (clojure.string/blank? (.-label d))
                                               "Unknown Device"
                                               (.-label d))
@@ -174,8 +176,7 @@
 (defn config []
   (load-devices)
   (fn []
-    (let [phase (:phase @state)
-          current-dev (:selected-device @state)]
+    (let [phase (:phase @state) ]
       [:section.video-page
        [settings]
        [:div#recorder
