@@ -53,7 +53,7 @@
   (clj->js
    (cond->
        {:mimeType (str "video/webm;codecs=" (or (:id (:codec cfg)) "h264"))
-        ;; :resolution (dissoc (:resolution cfg) :id :text)
+        ;;:resolution (dissoc (:resolution cfg) :id :text)
         ;; canvas doues not mean resolution - it's video canvas
         ;; :canvas {:width (:minWidth (:resolution cfg))
         ;;          :height (:minHeight (:resolution cfg))}
@@ -77,8 +77,11 @@
 
 (defn start-recording []
   (let [d (:value (:selected-device @state))
-        constr  #js{:audio false
-                    :video #js{:deviceId (if-let [id (and d (.-deviceId d))] #js{:exact id} nil)}}]
+        cfg (:selected @state)
+        constr  (clj->js
+                  (cond-> {:audio false
+                           :video {:deviceId (if-let [id (and d (.-deviceId d))] #js{:exact id} nil)}}
+                    (:resolution cfg) (assoc-in [:video :mandatory] (dissoc (:resolution cfg) :id :text))))]
     (.log js/console "Media constr" constr)
     (.getUserMedia js/navigator
                    constr
@@ -144,7 +147,6 @@
     [radio-group {:title "Resolution"
                   :path [:selected :resolution]
                   :opts resolutions}]
-    ;; change-resolution
 
     [radio-group {:title "Frame Rate"
                   :path [:selected :frame-rate]
