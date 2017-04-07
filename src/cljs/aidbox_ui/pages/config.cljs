@@ -60,7 +60,8 @@
         }
 
      (:bit-rate cfg) (assoc :videoBitsPerSecond (:id (:bit-rate cfg)))
-     (:frame-rate cfg) (assoc :frameInterval (:id (:frame-rate cfg))))))
+     ;;(:frame-rate cfg) (assoc :frameInterval (:id (:frame-rate cfg)))
+     )))
 
 (defn do-start-recording [stream]
   (reset! astream stream)
@@ -81,16 +82,18 @@
         constr  (clj->js
                   (cond-> {:audio false
                            :video {:deviceId (if-let [id (and d (:id d))] {:exact id} nil)}}
-                    (:resolution cfg) (assoc-in [:video :mandatory] (dissoc (:resolution cfg) :id :text))))]
-    (.log js/console "Media constr" constr)
-    (.warn js/console  (clj->js d))
+                    (:resolution cfg) (assoc-in [:video :mandatory] (dissoc (:resolution cfg) :id :text))
+                    (:frame-rate cfg) (assoc-in [:video :farameRate] {:ideal (int (get-in cfg [:frame-rate :id]))
+                                                                      :max 60 })))]
 
-    (.getUserMedia js/navigator
-                   constr
-                   do-start-recording
-                   (fn [err]
-                     (swap! state assoc :error err)
-                     (.error js/console "getUserMedia ERROR" err)))))
+    (.log js/console "Media constr" constr)
+
+    (-> (.-mediaDevices js/navigator)
+        (.getUserMedia constr)
+        (.then do-start-recording)
+        (.catch (fn [err]
+                  (swap! state assoc :error err)
+                  (.error js/console "getUserMedia ERROR" err))))))
 
 (defn stop-recording []
   (swap! state assoc :phase :idle)
@@ -127,8 +130,6 @@
 (defn settings []
   [:div.settings
    [:section.video-page
-    #_[:pre {:style {:float "right"}}
-     (.stringify js/JSON (build-rtc-config (:selected @state)) nil " ")]
     [radio-group {:title "Choose Device"
                   :path [:selected :device]
                   :opts (->> (:devices @state)
@@ -150,15 +151,13 @@
                   :path [:selected :resolution]
                   :opts resolutions}]
 
-    [radio-group {:title "Frame Rate"
-                  :path [:selected :frame-rate]
-                  :opts [{:id "60" :text "60"}
-                         {:id "30" :text "30"}
-                         {:id "24" :text "24"}
-                         {:id "15" :text "15"}
-                         {:id "5" :text "5"}]}]
-    ;; change-framerate
-
+    ;[radio-group {:title "Frame Rate"
+                  ;:path [:selected :frame-rate]
+                  ;:opts [{:id "60" :text "60"}
+                         ;{:id "30" :text "30"}
+                         ;{:id "24" :text "24"}
+                         ;{:id "15" :text "15"}
+                         ;{:id "5" :text "5"}]}]
 
     [radio-group {:title "Bitrate"
                   :path [:selected :bit-rate]
