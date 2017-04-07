@@ -1,5 +1,3 @@
-{:spec {:Image "aidbox/videorecorder:c38d93571dc6f819fc9e4624118948ca5e5b7b7d"
-        :Env ["PORT=8080", "UPLOAD_DIR=/tmp"]
-        :Ports {:PrivatePort 8080
-                :PublicPort  8080
-                :Type "tcp" } }}
+{:spec {:Image "aidbox/videorecorder:7a3f07400b17efa00e1acb1784b84562ab232bcd"
+        :Env ["PORT=8080" "UPLOAD_DIR=/tmp"]
+        :HostConfig {:PortBindings {"8080/tcp" [{:HostPort "8080"}]} }}
