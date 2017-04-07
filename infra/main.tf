@@ -1,5 +1,5 @@
 variable "profile"           { default = "aidbox" }
-variable "prefix"            { default = "aidbox-basic" }
+variable "prefix"            { default = "videorecorder" }
 variable "region"            { default = "us-west-1" }
 variable "availability_zone" { default = "us-west-1a"}
 variable "ami"               { default = "ami-3b6b205b" }
@@ -71,7 +71,7 @@ resource "aws_instance" "main" {
 }
 
 data "template_file" "role" {
-  template = "{:spec {:Image \"nginx:1.11.5-alpine\"}}"
+  template = "${file("${path.module}/role.edn")}"
 }
 
 resource "null_resource" "files" {
