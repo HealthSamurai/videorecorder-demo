@@ -80,7 +80,7 @@
 (defn start []
   (when-let [s @srv] (s))
   (reset! srv
-          (server/run-server #'app {:port (or (env/env :port) 8087)
+          (server/run-server #'app {:port (Integer/parseInt (or (env/env :port) 8087))
                              :max-body 1000000000})))
 
 (defn -main [& args]

@@ -7,6 +7,6 @@ RUN apt-get -y install ffmpeg
 
 COPY backend/target/videorecorder.jar /var/videorecorder.jar
 
-ENTRYPOINT ["java", "-cp", "/var/videorecorder.jar", "clojure.main", "-m", "web"]
+ENTRYPOINT ["java", "-cp", "/var/videorecorder.jar", "clojure.main", "-m", "heartsmart.backend"]
 
 CMD ["start"]
