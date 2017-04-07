@@ -4,15 +4,18 @@
             [ring.util.codec]
             [ring.middleware.defaults :as ring]
             [environ.core :as env]
+            [ring.util.response :as response]
             [hiccup.core :as hiccup]
             [cheshire.core :as json]
             [route-map.core :as route-map]
             [clojure.java.shell :as shell]
             [ring.middleware.resource :as static]
             [clojure.string :as str]
+            [ring.middleware.head :as head]
             [clojure.java.io :as io]))
 
-(def upload-folder "/Users/nicola/heartsmart/backend/resources/public/videos")
+(def upload-folder
+  (or (env/env :upload-dir) "/tmp"))
 
 (defn index [req]
   {:body (hiccup/html
@@ -42,14 +45,19 @@
                         (str upload-folder "/" file-name)
                         "-an" "-vcodec" "rawvideo" "-y"
                         (str upload-folder "/" conv-file-name))]
-    {:body (pr-str tmp-path status ext file-name)
+    {:body    (json/generate-string
+               {:file file-name
+                :avi conv-file-name
+                :file-status status
+                :conversion-status convert-status})
      :headers {"Content-Type" "text/html"}
-     :status 200}))
+     :status  200}))
 
-(defn show [req]
-  {:body (pr-str req)
-   :headers {"Content-Type" "text/html"}
-   :status 200})
+(defn show [{{id :id} :params :as req}]
+  (->
+   (.toURL (.toURI (io/file (str upload-folder "/" id))))
+   (response/url-response )
+   (head/head-response req)))
 
 (defn videos [req]
   (let [files (file-seq (io/file upload-folder))]
@@ -74,8 +82,7 @@
 
 (def app
   (-> dispatch
-      (ring/wrap-defaults (assoc-in ring/api-defaults [:params :multipart] true))
-      (static/wrap-resource "public")))
+      (ring/wrap-defaults (assoc-in ring/api-defaults [:params :multipart] true))))
 
 (defn start []
   (when-let [s @srv] (s))
