@@ -1,9 +1,11 @@
 FROM java:8
-COPY backend/target/videorecorder.jar /var/videorecorder.jar
 EXPOSE 8080
 
 RUN mkdir -p /var/videorecorder-resources
-RUN apt-get install ffmpeg
+RUN apt-get update
+RUN apt-get -y install ffmpeg
+
+COPY backend/target/videorecorder.jar /var/videorecorder.jar
 
 ENTRYPOINT ["java", "-cp", "/var/videorecorder.jar", "clojure.main", "-m", "web"]
 
