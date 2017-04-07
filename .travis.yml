@@ -7,6 +7,14 @@ cache:
 jdk:
   - oraclejdk8
 
+services:
+  - docker
+
+env:
+  global:
+    - IMAGE_NAME: videorecorder
+    - GITHUB_REF: github.com/HealthSamurai/videorecorder-demo
+    - secure: "AUFugqJeSnYMdfST5PgqXH73XRzoU4ibN2nCrAVqDjMhRlML3rhgSPOwhkYdLzlBIIeoU6KjAN+Wo3ALcnR66rFSvI8Rj0wHwQ7SscHpyfYfJIhVH+7X41n3eyXUpzBlxOA43DLb/HIUIBnkKRcc+bkVEA58rOhyZ9JXmmNxVCFqWvotoHWSQtF5TUdehi6OOwAW66TTc4wWHco/0xYMwaDeUHXCtgLdlZL3+hNfZo6pCQ9qZdDO4PpdgPKH12LYqipvN7Yi3C4X1ECzAbUGzowk9cMrWOyZnMVYswHjLevfRnK3S6RKe5tQd3b0uPRmkSLRFmCPkimPEG5z15E6r+FEPDHK06OwiFKL0Q9jdYW/R+I1COq3YORZ9eyfnFDuCapRGKOzqGCXTZB6y+g2FcJSNSz++nAcN6BP4zLwEzp5pPMmODv4LuKT3BdvHE/fqWWHG5L9HfgVpU9kTbq8aRg5UKHBR+1qkrCQf+holE8wdlD7Rv/bK9o55GbVJBOt52JA/QR8/8fJhe2GKMI4jEYz4TpqcsO4fZkgHgPHPWkqZH7YOZXTGwma8FfgFf72webQxhp+rEGg9vgLyaL4MC8TM2k97unYLyjDIR4KSBvxyN9NQxanMMbOBPTKcUCKyC+aqj/QSFXnz+blxZf/jy8WlwVnFqkVUVIcVTM4Obk="
 
 before_script:
   - gem install sass --no-ri --no-rdoc
@@ -17,8 +25,9 @@ script:
   - lein uberjar
   - ls target
   - popd
+  - docker build --name
+  - VERSION=$(git rev-parse HEAD)
+  - IMAGE=$IMAGE_NAME:$VERSION
+  - docker build -t $IMAGE .
+  - docker images
 
-env:
-  global:
-    - GITHUB_REF: github.com/HealthSamurai/videorecorder-demo
-    - secure: "AUFugqJeSnYMdfST5PgqXH73XRzoU4ibN2nCrAVqDjMhRlML3rhgSPOwhkYdLzlBIIeoU6KjAN+Wo3ALcnR66rFSvI8Rj0wHwQ7SscHpyfYfJIhVH+7X41n3eyXUpzBlxOA43DLb/HIUIBnkKRcc+bkVEA58rOhyZ9JXmmNxVCFqWvotoHWSQtF5TUdehi6OOwAW66TTc4wWHco/0xYMwaDeUHXCtgLdlZL3+hNfZo6pCQ9qZdDO4PpdgPKH12LYqipvN7Yi3C4X1ECzAbUGzowk9cMrWOyZnMVYswHjLevfRnK3S6RKe5tQd3b0uPRmkSLRFmCPkimPEG5z15E6r+FEPDHK06OwiFKL0Q9jdYW/R+I1COq3YORZ9eyfnFDuCapRGKOzqGCXTZB6y+g2FcJSNSz++nAcN6BP4zLwEzp5pPMmODv4LuKT3BdvHE/fqWWHG5L9HfgVpU9kTbq8aRg5UKHBR+1qkrCQf+holE8wdlD7Rv/bK9o55GbVJBOt52JA/QR8/8fJhe2GKMI4jEYz4TpqcsO4fZkgHgPHPWkqZH7YOZXTGwma8FfgFf72webQxhp+rEGg9vgLyaL4MC8TM2k97unYLyjDIR4KSBvxyN9NQxanMMbOBPTKcUCKyC+aqj/QSFXnz+blxZf/jy8WlwVnFqkVUVIcVTM4Obk="
