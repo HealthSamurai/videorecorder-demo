@@ -8,10 +8,14 @@
 
   :main heartsmart.backend
 
+  :resource-paths ["resources"]
+
   :dependencies [[ring "1.5.1"]
                  [ring/ring-defaults "0.2.3"]
                  [ring/ring-json "0.4.0"]
+                 [environ "1.1.0"]
                  [route-map "0.0.4"]
                  [cheshire "5.7.0"]
+                 [hiccup "1.0.5"]
                  [http-kit "2.2.0"]
                  [org.clojure/clojure "1.9.0-alpha15"]])

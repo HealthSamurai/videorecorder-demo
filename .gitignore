@@ -52,4 +52,5 @@ flycheck_*.el
 .projectile
 
 # directory configuration
-.dir-locals.el
+.dir-locals.elbackend/resources/public/
+backend/resources
