@@ -1,4 +1,4 @@
-(ns  aidbox-ui.pages.config
+(ns aidbox-ui.pages.config
   (:require [reagent.core :as r]
             [aidbox-ui.pages.page :as p]
             [aidbox-ui.pages.page :as page]))
@@ -8,65 +8,61 @@
 (defonce state (r/atom {:time 0
                         :devices []}))
 
-(defonce chunks (r/atom #js[]))
 (defonce videos (r/atom []))
 
-;; (defonce cfg (r/atom #js{:mimeType "video/webm;codecs=h264" }))
+(def resolutions
+  [{:id :360p
+    :width 480
+    :height 360}
+   {:id :480p
+    :width 640
+    :height 480}
+   {:id :720p
+    :wigth 1280
+    :height 720}
+   {:id :1080p
+    :width 1920
+    :height 1080}])
+
+(def frame-rates
+  [{:id "60"}
+   {:id "30"}
+   {:id "24"}
+   {:id "15"}
+   {:id "5"}])
+
+(def bitrates [{:id "8000000000" :text "1 GB bps"}
+               {:id "800000000" :text "100 MB bps"}
+               {:id "8000000" :text "1 MB bps"}
+               {:id "800000" :text "100 KB bps"}
+               {:id "8000" :text "1 KB bps"}
+               {:id "800"  :text "100 Bytes bps"}])
 
 (js/setInterval (fn []
                   (when (= :in-progress (:phase @state))
                     (swap! state update :time inc))) 1000)
-
 
 (defn load-devices []
   (swap! state assoc :devices [])
   (-> (.-mediaDevices js/navigator )
       (.enumerateDevices)
       (.then (fn [device]
-               (swap! state update :devices concat (.filter device #(= "videoinput" (.-kind %))))))))
-
-
-(def resolutions
-  (->> [{:id :360p
-         :minWidth 480
-         :minHeight 360
-         :maxWidth 480
-         :maxHeight 360}
-        {:id :480p
-         :minWidth 640
-         :minHeight 480
-         :maxWidth 640
-         :maxHeight 480}
-        {:id :720p
-         :minWidth 1280
-         :minHeight 720
-         :maxWidth 1280
-         :maxHeight 720}
-        {:id :1080p
-         :minWidth 1920
-         :minHeight 1080
-         :maxWidth 1920
-         :maxHeight 1080}]
-       (mapv (fn [x] (assoc x :text (name (:id x)))))))
+               (let [video-devices (.filter device #(= "videoinput" (.-kind %)))]
+                 (swap! state update :devices concat video-devices))))))
 
 (defn build-rtc-config [cfg]
-  (clj->js
-   (cond->
-       {:mimeType (str "video/webm;codecs=" (or (:id (:codec cfg)) "h264"))
-        ;;:resolution (dissoc (:resolution cfg) :id :text)
-        ;; canvas doues not mean resolution - it's video canvas
-        ;; :canvas {:width (:minWidth (:resolution cfg))
-        ;;          :height (:minHeight (:resolution cfg))}
-        }
-
-     (:bit-rate cfg) (assoc :videoBitsPerSecond (:id (:bit-rate cfg)))
-     ;;(:frame-rate cfg) (assoc :frameInterval (:id (:frame-rate cfg)))
-     )))
+  (let [conf {:mimeType (str "video/webm;codecs=" (or (:id (:codec cfg)) "h264"))}]
+    (clj->js (if (:bit-rate cfg)
+               (assoc conf :videoBitsPerSecond (:id (:bit-rate cfg)))
+               conf))))
 
 (defn do-start-recording [stream]
   (reset! astream stream)
   (let [video (.getElementById js/document "video")
-        cfg (build-rtc-config (:selected @state))]
+        cfg (build-rtc-config (:selected @state))
+        video-track (first (.getVideoTracks stream))]
+
+    (.log js/console "applied constraints: " (.getConstraints video-track))
 
     (aset video "srcObject" stream)
     (.play video)
@@ -76,24 +72,26 @@
 
     (swap! state merge  {:phase :in-progress :time 0})))
 
+(defn device-constraints [cfg]
+  (cond-> {}
+    (:resolution cfg) (merge (dissoc (:resolution cfg) :id :text))
+    (:frame-rate cfg) (assoc :frameRate (:id (:frame-rate cfg)))))
+
 (defn start-recording []
   (let [cfg (:selected @state)
         d (:device cfg)
-        constr  (clj->js
-                  (cond-> {:audio false
-                           :video {:deviceId (if-let [id (and d (:id d))] {:exact id} nil)}}
-                    (:resolution cfg) (assoc-in [:video :mandatory] (dissoc (:resolution cfg) :id :text))
-                    (:frame-rate cfg) (assoc-in [:video :farameRate] {:ideal (int (get-in cfg [:frame-rate :id]))
-                                                                      :max 60 })))]
+        constr {:audio false
+                :video (merge
+                        {:deviceId (if-let [id (and d (:id d))] {:exact id} nil)}
+                        (device-constraints cfg))}]
 
-    (.log js/console "Media constr" constr)
+    (.log js/console "Media constr" (clj->js constr))
+    (.warn js/console  (clj->js d))
 
     (-> (.-mediaDevices js/navigator)
-        (.getUserMedia constr)
+        (.getUserMedia (clj->js constr))
         (.then do-start-recording)
-        (.catch (fn [err]
-                  (swap! state assoc :error err)
-                  (.error js/console "getUserMedia ERROR" err))))))
+        (.catch (fn [err] (.log js/console err))))))
 
 (defn stop-recording []
   (swap! state assoc :phase :idle)
@@ -105,9 +103,6 @@
                                         :url videoURL
                                         :blob (.getBlob @recorder)
                                         :id (name (gensym))}))))
-
-(defn replay-recording []
-  (println "replay"))
 
 (defn radio-group [args]
   (let [do-selection (fn [x path]
@@ -127,9 +122,14 @@
                          :on-click #(do-selection x path)}
             (:text x) ])]))))
 
+(defn wrap-attrs [v]
+  (assoc v :text (name (:id v))))
+
 (defn settings []
   [:div.settings
    [:section.video-page
+    [:pre {:style {:float "right"}}
+     (.stringify js/JSON (build-rtc-config (:selected @state)) nil " ")]
     [radio-group {:title "Choose Device"
                   :path [:selected :device]
                   :opts (->> (:devices @state)
@@ -149,28 +149,19 @@
 
     [radio-group {:title "Resolution"
                   :path [:selected :resolution]
-                  :opts resolutions}]
+                  :opts (mapv wrap-attrs
+                              resolutions)}]
 
-    ;[radio-group {:title "Frame Rate"
-                  ;:path [:selected :frame-rate]
-                  ;:opts [{:id "60" :text "60"}
-                         ;{:id "30" :text "30"}
-                         ;{:id "24" :text "24"}
-                         ;{:id "15" :text "15"}
-                         ;{:id "5" :text "5"}]}]
+    [radio-group {:title "Frame Rate"
+                  :path [:selected :frame-rate]
+                  :opts (mapv wrap-attrs
+                              frame-rates)}]
+    ;; change-framerate
+
 
     [radio-group {:title "Bitrate"
                   :path [:selected :bit-rate]
-                  :opts [{:id "8000000000" :text "1 GB bps"}
-                         {:id "800000000" :text "100 MB bps"}
-                         {:id "8000000" :text "1 MB bps"}
-                         {:id "800000" :text "100 KB bps"}
-                         {:id "8000" :text "1 KB bps"}
-                         {:id "800"  :text "100 Bytes bps"}]}]
-
-
-    ;; change-bitrate
-    ]])
+                  :opts bitrates}]]])
 
 (defn config []
   (load-devices)
@@ -198,9 +189,7 @@
              [:h5 "Record " (str (:ts vs))]
              [:div "Size: "(pr-str (/ (.-size (:blob vs)) 1000000))  "Mb"]
 
-             [:a.download {:href (:url vs) :download "video.mp4"} "Download"]
-
-             ]])]]])))
+             [:a.download {:href (:url vs) :download "video.mp4"} "Download"]]])]]])))
 
 (defmethod page/page :config
   [k]
