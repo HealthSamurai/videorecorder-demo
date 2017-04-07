@@ -42,7 +42,7 @@
          :minHeight 720
          :maxWidth 1280
          :maxHeight 720}
-        {:id :1080p 
+        {:id :1080p
          :minWidth 1920
          :minHeight 1080
          :maxWidth 1920
@@ -53,14 +53,15 @@
   (clj->js
    (cond->
        {:mimeType (str "video/webm;codecs=" (or (:id (:codec cfg)) "h264"))
-        ;; :resolution (dissoc (:resolution cfg) :id :text)
+        ;;:resolution (dissoc (:resolution cfg) :id :text)
         ;; canvas doues not mean resolution - it's video canvas
         ;; :canvas {:width (:minWidth (:resolution cfg))
         ;;          :height (:minHeight (:resolution cfg))}
         }
 
      (:bit-rate cfg) (assoc :videoBitsPerSecond (:id (:bit-rate cfg)))
-     (:frame-rate cfg) (assoc :frameInterval (:id (:frame-rate cfg))))))
+     ;;(:frame-rate cfg) (assoc :frameInterval (:id (:frame-rate cfg)))
+     )))
 
 (defn do-start-recording [stream]
   (reset! astream stream)
@@ -76,16 +77,23 @@
     (swap! state merge  {:phase :in-progress :time 0})))
 
 (defn start-recording []
-  (let [d (:value (:selected-device @state))
-        constr  #js{:audio false
-                    :video #js{:deviceId (if-let [id (and d (.-deviceId d))] #js{:exact id} nil)}}]
+  (let [cfg (:selected @state)
+        d (:device cfg)
+        constr  (clj->js
+                  (cond-> {:audio false
+                           :video {:deviceId (if-let [id (and d (:id d))] {:exact id} nil)}}
+                    (:resolution cfg) (assoc-in [:video :mandatory] (dissoc (:resolution cfg) :id :text))
+                    (:frame-rate cfg) (assoc-in [:video :farameRate] {:ideal (int (get-in cfg [:frame-rate :id]))
+                                                                      :max 60 })))]
+
     (.log js/console "Media constr" constr)
-    (.getUserMedia js/navigator
-                   constr
-                   do-start-recording
-                   (fn [err]
-                     (swap! state assoc :error err)
-                     (.error js/console "getUserMedia ERROR" err)))))
+
+    (-> (.-mediaDevices js/navigator)
+        (.getUserMedia constr)
+        (.then do-start-recording)
+        (.catch (fn [err]
+                  (swap! state assoc :error err)
+                  (.error js/console "getUserMedia ERROR" err))))))
 
 (defn stop-recording []
   (swap! state assoc :phase :idle)
@@ -114,7 +122,7 @@
                        :on-click #(do-selection nil path)}
           "Default"]
          (for [x opts]
-           [:div.device {:key (:id x) 
+           [:div.device {:key (:id x)
                          :class (when (= x cur) "active")
                          :on-click #(do-selection x path)}
             (:text x) ])]))))
@@ -122,16 +130,16 @@
 (defn settings []
   [:div.settings
    [:section.video-page
-    [:pre {:style {:float "right"}}
-     (.stringify js/JSON (build-rtc-config (:selected @state)) nil " ")]
     [radio-group {:title "Choose Device"
                   :path [:selected :device]
                   :opts (->> (:devices @state)
                              (mapv (fn [d]
-                                     {:id (str (.-deviceId d) (.-kind d))
-                                      :text (.-label d)
+                                     {:id (.-deviceId d)
+                                      :text (if (clojure.string/blank? (.-label d))
+                                              "Unknown Device"
+                                              (.-label d))
                                       :value d})))}]
-    
+
     [radio-group {:title "Compression"
                   :path [:selected :codec]
                   :opts [{:id "vp8" :text "vp8"}
@@ -142,17 +150,14 @@
     [radio-group {:title "Resolution"
                   :path [:selected :resolution]
                   :opts resolutions}]
-    ;; change-resolution
 
-    [radio-group {:title "Frame Rate"
-                  :path [:selected :frame-rate]
-                  :opts [{:id "60" :text "60"}
-                         {:id "30" :text "30"}
-                         {:id "24" :text "24"}
-                         {:id "15" :text "15"}
-                         {:id "5" :text "5"}]}]
-    ;; change-framerate
-
+    ;[radio-group {:title "Frame Rate"
+                  ;:path [:selected :frame-rate]
+                  ;:opts [{:id "60" :text "60"}
+                         ;{:id "30" :text "30"}
+                         ;{:id "24" :text "24"}
+                         ;{:id "15" :text "15"}
+                         ;{:id "5" :text "5"}]}]
 
     [radio-group {:title "Bitrate"
                   :path [:selected :bit-rate]
@@ -163,15 +168,14 @@
                          {:id "8000" :text "1 KB bps"}
                          {:id "800"  :text "100 Bytes bps"}]}]
 
-    
+
     ;; change-bitrate
     ]])
 
 (defn config []
   (load-devices)
   (fn []
-    (let [phase (:phase @state)
-          current-dev (:selected-device @state)]
+    (let [phase (:phase @state) ]
       [:section.video-page
        [settings]
        [:div#recorder

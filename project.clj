@@ -60,7 +60,8 @@
                                   [pjstadig/humane-test-output "0.8.1"]]
 
                    :source-paths ["src/cljs" "src/clj" "env/dev/clj"]
-                   :plugins [[lein-figwheel "0.5.10-SNAPSHOT"]]
+                   :plugins [[lein-figwheel "0.5.10-SNAPSHOT"]
+                             [cider/cider-nrepl "0.14.0"]]
 
                    :env {:dev true}
 
