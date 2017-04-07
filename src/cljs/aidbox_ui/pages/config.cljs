@@ -42,7 +42,7 @@
          :minHeight 720
          :maxWidth 1280
          :maxHeight 720}
-        {:id :1080p 
+        {:id :1080p
          :minWidth 1920
          :minHeight 1080
          :maxWidth 1920
@@ -114,7 +114,7 @@
                        :on-click #(do-selection nil path)}
           "Default"]
          (for [x opts]
-           [:div.device {:key (:id x) 
+           [:div.device {:key (:id x)
                          :class (when (= x cur) "active")
                          :on-click #(do-selection x path)}
             (:text x) ])]))))
@@ -129,9 +129,11 @@
                   :opts (->> (:devices @state)
                              (mapv (fn [d]
                                      {:id (str (.-deviceId d) (.-kind d))
-                                      :text (.-label d)
+                                      :text (if (clojure.string/blank? (.-label d))
+                                              "Unknown Device"
+                                              (.-label d))
                                       :value d})))}]
-    
+
     [radio-group {:title "Compression"
                   :path [:selected :codec]
                   :opts [{:id "vp8" :text "vp8"}
@@ -163,7 +165,7 @@
                          {:id "8000" :text "1 KB bps"}
                          {:id "800"  :text "100 Bytes bps"}]}]
 
-    
+
     ;; change-bitrate
     ]])
 
