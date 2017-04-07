@@ -1,4 +1,4 @@
 {:spec {:Image "aidbox/videorecorder:930622153d8ce23681a4c0d10eaa4728028277c6"
         :Env ["PORT=8080" "UPLOAD_DIR=/tmp/recorder"]
-        :Mounts [{:Source "/tmp/recorder" :Destination "/tmp/recorder"}]
-        :HostConfig {:PortBindings {"8080/tcp" [{:HostPort "8080"}]} }}
+        ;; :Mounts [{:Source "/tmp/recorder" :Destination "/tmp/recorder"}]
+        :HostConfig {:PortBindings {"8080/tcp" [{:HostPort "8080"}]} }}}
