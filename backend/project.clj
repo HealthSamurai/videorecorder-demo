@@ -5,6 +5,9 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :plugins [[lein-ancient "0.6.10"]]
+
+  :main heartsmart.backend
+
   :dependencies [[ring "1.5.1"]
                  [ring/ring-defaults "0.2.3"]
                  [ring/ring-json "0.4.0"]

@@ -1,9 +1,10 @@
 (ns heartsmart.backend
+
+  (:gen-class)
   (:require [org.httpkit.server :as server]
             [ring.util.codec]
             [ring.middleware.defaults :as ring]
             [route-map.core :as route-map]))
-
 
 (defn index [req]
   {:body (pr-str req)
@@ -36,4 +37,7 @@
 (defn start []
   (when-let [s @srv] (s))
   (server/run-server #'app {:port 8087}))
+
+(defn -main [& args]
+  (start))
 
