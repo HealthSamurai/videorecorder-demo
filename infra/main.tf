@@ -46,7 +46,7 @@ resource "aws_instance" "main" {
   ami = "${var.ami}"
   key_name = "${var.aws_key}"
   security_groups = ["${aws_security_group.main.name}"]
-  instance_type = "m4.xlarge"
+  instance_type = "t2.micro"
 
   availability_zone = "${var.availability_zone}"
 

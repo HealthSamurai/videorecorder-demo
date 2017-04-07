@@ -1,32 +1,31 @@
 language: clojure
 lein: lein
-script: bash ./deploy.sh
 cache:
   directories:
-    - $HOME/.m2
+  - "$HOME/.m2"
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 services:
-  - docker
-
+- docker
 env:
   global:
-    - IMAGE_NAME: videorecorder
-    - GITHUB_REF: github.com/HealthSamurai/videorecorder-demo
-    - secure: "AUFugqJeSnYMdfST5PgqXH73XRzoU4ibN2nCrAVqDjMhRlML3rhgSPOwhkYdLzlBIIeoU6KjAN+Wo3ALcnR66rFSvI8Rj0wHwQ7SscHpyfYfJIhVH+7X41n3eyXUpzBlxOA43DLb/HIUIBnkKRcc+bkVEA58rOhyZ9JXmmNxVCFqWvotoHWSQtF5TUdehi6OOwAW66TTc4wWHco/0xYMwaDeUHXCtgLdlZL3+hNfZo6pCQ9qZdDO4PpdgPKH12LYqipvN7Yi3C4X1ECzAbUGzowk9cMrWOyZnMVYswHjLevfRnK3S6RKe5tQd3b0uPRmkSLRFmCPkimPEG5z15E6r+FEPDHK06OwiFKL0Q9jdYW/R+I1COq3YORZ9eyfnFDuCapRGKOzqGCXTZB6y+g2FcJSNSz++nAcN6BP4zLwEzp5pPMmODv4LuKT3BdvHE/fqWWHG5L9HfgVpU9kTbq8aRg5UKHBR+1qkrCQf+holE8wdlD7Rv/bK9o55GbVJBOt52JA/QR8/8fJhe2GKMI4jEYz4TpqcsO4fZkgHgPHPWkqZH7YOZXTGwma8FfgFf72webQxhp+rEGg9vgLyaL4MC8TM2k97unYLyjDIR4KSBvxyN9NQxanMMbOBPTKcUCKyC+aqj/QSFXnz+blxZf/jy8WlwVnFqkVUVIcVTM4Obk="
-
+  - IMAGE_NAME: aidbox/videorecorder
+  - GITHUB_REF: github.com/HealthSamurai/videorecorder-demo
+  - secure: AUFugqJeSnYMdfST5PgqXH73XRzoU4ibN2nCrAVqDjMhRlML3rhgSPOwhkYdLzlBIIeoU6KjAN+Wo3ALcnR66rFSvI8Rj0wHwQ7SscHpyfYfJIhVH+7X41n3eyXUpzBlxOA43DLb/HIUIBnkKRcc+bkVEA58rOhyZ9JXmmNxVCFqWvotoHWSQtF5TUdehi6OOwAW66TTc4wWHco/0xYMwaDeUHXCtgLdlZL3+hNfZo6pCQ9qZdDO4PpdgPKH12LYqipvN7Yi3C4X1ECzAbUGzowk9cMrWOyZnMVYswHjLevfRnK3S6RKe5tQd3b0uPRmkSLRFmCPkimPEG5z15E6r+FEPDHK06OwiFKL0Q9jdYW/R+I1COq3YORZ9eyfnFDuCapRGKOzqGCXTZB6y+g2FcJSNSz++nAcN6BP4zLwEzp5pPMmODv4LuKT3BdvHE/fqWWHG5L9HfgVpU9kTbq8aRg5UKHBR+1qkrCQf+holE8wdlD7Rv/bK9o55GbVJBOt52JA/QR8/8fJhe2GKMI4jEYz4TpqcsO4fZkgHgPHPWkqZH7YOZXTGwma8FfgFf72webQxhp+rEGg9vgLyaL4MC8TM2k97unYLyjDIR4KSBvxyN9NQxanMMbOBPTKcUCKyC+aqj/QSFXnz+blxZf/jy8WlwVnFqkVUVIcVTM4Obk=
+  - secure: uqiEibwmhdQnwBHY3L7j7E/npqlgLw8+VJl+MS0Lpi1ISvSbId5Rbf33nJCvp3pje6KGCUmip/yyYRMLWLEkUtunUkWuaaUilddKdhi7xTAnKy6iQ/YTT3SEuah3l1nuOP5FWFjZVV1LV1l3UsF5PWjxS1SWcmMsDky9juYjhkm40ifYJ0oLm/PkmiuHu/Lg2xpAUlL6i41gLvLrKJtAGgcWQ7KnxHwpANONYxYASlwqp/3+EYts93iUpPg59CRR0Mdujl+kEl8v7c90rh+0z6Wgr0S0geDgRlvP6KMfUQEqeMDoGfCtnQUwEei4rCK6svi3Z1Is4jQCJSp+BIozibOh21ps37745Um8o5WnINqsmISlE+QXWnliT4vUt4AQLk90A4orjo0QjTViviPuHX70HFd+B2mArVm1sxotOrpsOzDevVfZzyijj0960ThhVbiuoGT5mkZLjzBFs+6L77JlKo05hkojStjyMkSWizXQ04yRXDqV5XAHb/RTlSSDDjun8rHaTGydQvT1O8DIl92Nv+erkR1N94kGhXzoM6AYXcjgFYOoVdsULBNp/6TBewmqa+M42yMA4rnVCUSEym0QstTe+0W1DoX8EStLM6WaQUwif/kR/J7ROPiCQsRZVwXu+h6WCfNBouR8cGIde9s7NVzVxcakt7vXsZeE6Uk=
+  - secure: p4z5H6gh3nINYL4hfcaRJh/1zxuBFm/O9iJVLc3bstHw4cW/LR1jQOT0dqCuPgdlZu9kvuzLbCXMcR0GJYC6ZXNHcmw/7O0+4wmIYvm8Z5/ms2wfqpWdWLLpCZnpP1in21+jtF2k9EJ1IHivJRHWzs2lpsPlbxXbrU6Zmlh3LVwOH4wS/OXMqc43AcSItAzlu2JOIRq1PLqAaxWdUqHunSuT/vAOoUunGJPP16398dwUmBGxGxlA2LdzGzc/3fgtwAM5ctmZCaDUNMkwZ4r0xXAQUPBI8gIXIcgwpfxIxujGBqaaSp/+gDYNraUj9aAV/wNBIkiFlJQspvWBfryops7QLF4tM7FCp3/ZZMMH0zAc5HUhPjTugAGaIJDUKasQoyU6FuNHsPVqxpzKXHORBTYKcbF0jPriBkoUTorZb1eZd4TR3AgE/cNZ6JRET/8H9I0NlXuMQXelObaxzV2FXkdEOXWN/PdyqIYmfM0Xp/nlcTdVXHswKfcQhrL18asvMBvW8xfggk7ru79XuWmiOdOQxdc9u8l7ow59NEnyEO18imr1WDLOefwMr2yY2gHjE39zYc3quefjQkQyeEyqZ438PVQdJ37qC1UvxwWotQghLhiQH1XzCsTnGfDC/sG2xVFyryeTMHcQLi3MTKjrGss+lfhgHSQQ6Pd8sXad5wk=
 before_script:
-  - gem install sass --no-ri --no-rdoc
+- gem install sass --no-ri --no-rdoc
 
 script:
-  - bash ./build.sh
-  - pushd backend
-  - lein uberjar
-  - ls target
-  - popd
-  - VERSION=$(git rev-parse HEAD)
-  - IMAGE=$IMAGE_NAME:$VERSION
-  - docker build -t $IMAGE .
-  - docker images
-
+- bash ./build.sh
+- pushd backend
+- lein uberjar
+- ls target
+- popd
+- VERSION=$(git rev-parse HEAD)
+- IMAGE=$IMAGE_NAME:$VERSION
+- docker build -t $IMAGE .
+- docker images
+- docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
+- docker push $IMAGE
