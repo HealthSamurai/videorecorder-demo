@@ -189,8 +189,15 @@
              [:h5 "Record " (str (:ts vs))]
              [:div "Size: "(pr-str (/ (.-size (:blob vs)) 1000000))  "Mb"]
 
-             [:a.download {:href (:url vs) :download "video.mp4"} "Download"]]])]]])))
-
+             [:a.download {:href (:url vs) :download "video.mp4"} "Download"]]])]]
+       [:div
+        [:h3 "Upload Video"]
+        [:form {:enctype "multipart/form-data"
+                    :method "post"
+                    :action "/videos"}
+             [:input {:type "text" :name "name"}]
+             [:input {:type "file" :name "file"}]
+             [:input {:type "submit" :value "Upload"}]]]])))
 (defmethod page/page :config
   [k]
   (println "config")
