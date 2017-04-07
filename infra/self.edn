@@ -1,0 +1,9 @@
+{:spec
+ {:Image "prepor/condo:0.11.dev"
+  :Cmd ["start" "--directory" "/var/lib/condo"]
+  :Env ["DOCKER_API_VERSION=1.24"]
+  :HostConfig {:Binds ["/var/run/docker.sock:/var/run/docker.sock"
+                       "/home/ubuntu/condo/:/var/lib/condo/"]
+               :LogConfig {:Type "journald"
+                           :Config {:tag "condo"}}
+               :RestartPolicy {:Name "on-failure"}}}}

@@ -10,6 +10,7 @@
 
   :resource-paths ["resources"]
 
+  :uberjar-name "videorecorder.jar"
   :dependencies [[ring "1.5.1"]
                  [ring/ring-defaults "0.2.3"]
                  [ring/ring-json "0.4.0"]
