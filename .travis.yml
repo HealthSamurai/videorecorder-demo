@@ -25,7 +25,6 @@ script:
   - lein uberjar
   - ls target
   - popd
-  - docker build --name
   - VERSION=$(git rev-parse HEAD)
   - IMAGE=$IMAGE_NAME:$VERSION
   - docker build -t $IMAGE .
