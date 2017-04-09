@@ -116,7 +116,6 @@
 
 (defn radio-group [args]
   (let [do-selection (fn [x path]
-                       (swap! state update :errors #(conj % 1))
                        (.log js/console "select" path x)
                        (swap! state assoc-in path x))]
     (fn [{path :path opts :opts title :title}]
