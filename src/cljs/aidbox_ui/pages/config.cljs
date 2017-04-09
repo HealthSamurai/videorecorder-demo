@@ -3,33 +3,39 @@
             [aidbox-ui.pages.page :as p]
             [aidbox-ui.pages.page :as page]))
 
-(defonce recorder (atom nil))
-(defonce astream (atom nil))
 (defonce state (r/atom {:time 0
                         :devices []}))
 
+(defonce recorder (atom nil))
+(defonce astream (atom nil))
 (defonce videos (r/atom []))
+(defonce errors (r/atom []))
 
 (def resolutions
   [{:id :360p
-    :width 480
-    :height 360}
+    :width {:exact 480}
+    :height {:exact 360}}
    {:id :480p
-    :width 640
-    :height 480}
+    :width {:exact 640}
+    :height {:exact 480}}
    {:id :720p
-    :wigth 1280
-    :height 720}
+    :wigth {:exact 1280}
+    :height {:exact 720}}
    {:id :1080p
-    :width 1920
-    :height 1080}])
+    :width {:exact 1920}
+    :height {:exact 1080}}])
 
 (def frame-rates
-  [{:id "60"}
-   {:id "30"}
-   {:id "24"}
-   {:id "15"}
-   {:id "5"}])
+  [{:id "60"
+    :frameRate {:exact 60}}
+   {:id "30"
+    :frameRate {:exact 30}}
+   {:id "24"
+    :frameRate {:exact 24}}
+   {:id "15"
+    :frameRate {:exact 15}}
+   {:id "5"
+    :frameRate {:exact 5}}])
 
 (def bitrates [{:id "8000000000" :text "1 GB bps"}
                {:id "800000000" :text "100 MB bps"}
@@ -74,8 +80,8 @@
 
 (defn device-constraints [cfg]
   (cond-> {}
-    (:resolution cfg) (merge (dissoc (:resolution cfg) :id :text))
-    (:frame-rate cfg) (assoc :frameRate (:id (:frame-rate cfg)))))
+      (:resolution cfg) (merge (dissoc (:resolution cfg) :id :text))
+      (:frame-rate cfg) (merge (dissoc (:frame-rate cfg) :id))))
 
 (defn start-recording []
   (let [cfg (:selected @state)
@@ -86,12 +92,16 @@
                         (device-constraints cfg))}]
 
     (.log js/console "Media constr" (clj->js constr))
-    (.warn js/console  (clj->js d))
 
     (-> (.-mediaDevices js/navigator)
         (.getUserMedia (clj->js constr))
         (.then do-start-recording)
-        (.catch (fn [err] (.log js/console err))))))
+        (.catch (fn [err]
+                  (swap! errors (fn [st err]
+                                  (conj st
+                                        (str "Device does not support selected " err)))
+                         (.-constraint err))
+                  (.log js/console err))))))
 
 (defn stop-recording []
   (swap! state assoc :phase :idle)
@@ -106,6 +116,7 @@
 
 (defn radio-group [args]
   (let [do-selection (fn [x path]
+                       (swap! state update :errors #(conj % 1))
                        (.log js/console "select" path x)
                        (swap! state assoc-in path x))]
     (fn [{path :path opts :opts title :title}]
@@ -129,7 +140,7 @@
   [:div.settings
    [:section.video-page
     [:pre {:style {:float "right"}}
-     (.stringify js/JSON (build-rtc-config (:selected @state)) nil " ")]
+     (last @errors)]
     [radio-group {:title "Choose Device"
                   :path [:selected :device]
                   :opts (->> (:devices @state)
@@ -192,12 +203,13 @@
              [:a.download {:href (:url vs) :download "video.mp4"} "Download"]]])]]
        [:div
         [:h3 "Upload Video"]
-        [:form {:enctype "multipart/form-data"
+        [:form {:encType "multipart/form-data"
                     :method "post"
                     :action "/videos"}
              [:input {:type "text" :name "name"}]
              [:input {:type "file" :name "file"}]
              [:input {:type "submit" :value "Upload"}]]]])))
+
 (defmethod page/page :config
   [k]
   (println "config")
