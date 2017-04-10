@@ -12,6 +12,8 @@
 (defonce videos (r/atom []))
 (defonce errors (r/atom []))
 
+(def base-url "http://54.193.27.45")
+
 (def resolutions
   [{:id :360p
     :width {:exact 480}
@@ -140,7 +142,7 @@
 
 (defn upload-file [v]
   (.log js/console "Uploading file")
-  (http/post "/videos" {:multipart-params [["file" (:blob v)]]}))
+  (http/post (str base-url "/videos") {:multipart-params [[(:id v) (:blob v)]]}))
 
 (defn settings []
   [:div.settings
@@ -181,7 +183,7 @@
 (defn config []
   (load-devices)
   (fn []
-    (let [phase (:phase @state) ]
+    (let [phase (:phase @state)]
       [:section.video-page
        [settings]
        [:div#recorder
@@ -202,7 +204,9 @@
             [:div.desc
              [:h5 "Record " (str (:ts vs))]
              [:div "Size: "(pr-str (/ (.-size (:blob vs)) 1000000))  "Mb"]
-             [:a.download {:href (:url vs) :download "video.mp4"} "Download"]
+             [:a.download {:href (str base-url "/videos/" (:id vs))
+                           :download (str (:id vs) ".avi")}
+              "Download"]
              [:br]
              [:a.upload {:on-click #(upload-file vs)} "Upload"]]])]]])))
 
