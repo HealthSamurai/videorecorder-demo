@@ -9,7 +9,6 @@
             [cheshire.core :as json]
             [route-map.core :as route-map]
             [clojure.java.shell :as shell]
-            [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.resource :as static]
             [ring.middleware.file :as file-mw]
             [ring.middleware.content-type :as ct-mw]
@@ -83,9 +82,18 @@
     ((:match route) (assoc req :params (merge (:params req) (:params route))))
     {:body (str "Not found " meth " " uri)}))
 
+(defn wrap-cors [h]
+  (fn [req]
+    (let [res (h req)
+          res (assoc-in res [:headers "Access-Control-Allow-Origin"] "http://localhost:3000")
+          res (assoc-in res [:headers "Access-Control-Allow-Headers"] "Origin, X-Requested-With, Content-Type, Accept") 
+          res (assoc-in res [:headers "Access-Control-Allow-Credentials"] "true") ]
+      res
+      )))
+
 (def app
   (-> dispatch
-      wrap-cors
+      wrap-cors 
       (file-mw/wrap-file (or (env/env :static-dir) "/var/videorecorder-static"))
       (static/wrap-resource "public")
       (ct-mw/wrap-content-type)

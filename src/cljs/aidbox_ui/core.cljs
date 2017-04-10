@@ -47,7 +47,8 @@
    (assoc db :current-page event)))
 
 (def routes
-  {:.      {:. :config}
+  {:.       {:. :config}
+   "videos" {:. :videos}
    "sample" {:. :sample}})
 
 (defn- dispatch [event]

@@ -9,7 +9,7 @@
 ;;   (go
 ;;     (<! (async/timeout (* 1000 3)))))
 
-(defn toolkit-page []
+#_(defn toolkit-page []
   [:section.toolkit-page
    [tt/tooltip-dom]
 
@@ -252,6 +252,6 @@
    [:p "Another line to add more spacing around tooltiped buttons."]
    ])
 
-(defmethod page/page :toolkit
+#_(defmethod page/page :toolkit
   [k]
   [toolkit-page])

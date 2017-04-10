@@ -1,5 +1,7 @@
 (ns aidbox-ui.pages.config
-  (:require [reagent.core :as r]
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require [cljs.core.async :refer [<!]]
+            [reagent.core :as r]
             [aidbox-ui.pages.page :as p]
             [aidbox-ui.pages.page :as page]
             [cljs-http.client :as http]))
@@ -213,7 +215,27 @@
              [:br]
              [:a.upload {:on-click #(upload-file vs)} "Upload"]]])]]])))
 
+
+(defn $videos []
+  (let [vs (r/atom [])]
+    (go (reset! vs (<! (http/get (str base-url "/videos")))))
+    (fn []
+      (let [videos (:body @vs)]
+        [:section.video-page
+         [:div.videos
+         (for [v videos] ^{:key (:name v)}
+            [:div.item
+             [:video.preview {:src (str base-url "/" (:url v)) 
+                             :controls true}]]
+          )]]
+       ))))
+
 (defmethod page/page :config
   [k]
   (println "config")
   [config])
+
+(defmethod page/page :videos
+  [k]
+  (println "videos")
+  [$videos])

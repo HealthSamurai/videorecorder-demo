@@ -98,4 +98,5 @@
                             :output-to "resources/public/js/ui.js"
                             :output-dir "resources/public/js/out"
                             :optimizations :simple
+
                             :pretty-print  false}}}}}})
