@@ -16,6 +16,7 @@
                  [ring/ring-json "0.4.0"]
                  [environ "1.1.0"]
                  [route-map "0.0.4"]
+                 [ring-cors "0.1.9"]
                  [cheshire "5.7.0"]
                  [hiccup "1.0.5"]
                  [http-kit "2.2.0"]

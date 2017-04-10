@@ -19,6 +19,7 @@ before_script:
 - gem install sass --no-ri --no-rdoc
 script:
 - bash ./build.sh
+- mkdir /var/videorecorder-static
 - pushd backend
 - lein uberjar
 - ls target

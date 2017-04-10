@@ -9,6 +9,7 @@
             [cheshire.core :as json]
             [route-map.core :as route-map]
             [clojure.java.shell :as shell]
+            [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.resource :as static]
             [ring.middleware.file :as file-mw]
             [ring.middleware.content-type :as ct-mw]
@@ -84,6 +85,7 @@
 
 (def app
   (-> dispatch
+      wrap-cors
       (file-mw/wrap-file (or (env/env :static-dir) "/var/videorecorder-static"))
       (static/wrap-resource "public")
       (ct-mw/wrap-content-type)
