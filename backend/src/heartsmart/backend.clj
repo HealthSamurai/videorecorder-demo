@@ -10,6 +10,9 @@
             [route-map.core :as route-map]
             [clojure.java.shell :as shell]
             [ring.middleware.resource :as static]
+            [ring.middleware.file :as file-mw]
+            [ring.middleware.content-type :as ct-mw]
+            [ring.util.response :as resp]
             [clojure.string :as str]
             [ring.middleware.head :as head]
             [clojure.java.io :as io]))
@@ -81,6 +84,9 @@
 
 (def app
   (-> dispatch
+      (file-mw/wrap-file (or (env/env :static-dir) "/var/videorecorder-static"))
+      (static/wrap-resource "public")
+      (ct-mw/wrap-content-type)
       (ring/wrap-defaults (assoc-in ring/api-defaults [:params :multipart] true))))
 
 (defn start []
