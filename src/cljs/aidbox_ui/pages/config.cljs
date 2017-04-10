@@ -1,7 +1,8 @@
 (ns aidbox-ui.pages.config
   (:require [reagent.core :as r]
             [aidbox-ui.pages.page :as p]
-            [aidbox-ui.pages.page :as page]))
+            [aidbox-ui.pages.page :as page]
+            [cljs-http.client :as http]))
 
 (defonce state (r/atom {:time 0
                         :devices []}))
@@ -98,9 +99,11 @@
         (.then do-start-recording)
         (.catch (fn [err]
                   (swap! errors (fn [st err]
-                                  (conj st
-                                        (str "Device does not support selected " err)))
-                         (.-constraint err))
+                                  (let [msg (or (.-constraint err)
+                                                (.-constraintName err))]
+                                    (conj st
+                                          (str "Device does not support selected " msg))))
+                                  err)
                   (.log js/console err))))))
 
 (defn stop-recording []
@@ -135,6 +138,10 @@
 (defn wrap-attrs [v]
   (assoc v :text (name (:id v))))
 
+(defn upload-file [v]
+  (.log js/console "Uploading file")
+  (http/post "/videos" {:multipart-params [["file" (:blob v)]]}))
+
 (defn settings []
   [:div.settings
    [:section.video-page
@@ -166,8 +173,6 @@
                   :path [:selected :frame-rate]
                   :opts (mapv wrap-attrs
                               frame-rates)}]
-    ;; change-framerate
-
 
     [radio-group {:title "Bitrate"
                   :path [:selected :bit-rate]
@@ -186,7 +191,6 @@
          (if (= :in-progress phase)
            [:button.stop  {:title "stop recording" :on-click stop-recording} "Stop Recording"]
            [:button.start {:title "start recording" :on-click start-recording} "Start Recording"])]]
-
        [:br]
        [:br]
        [:div
@@ -198,16 +202,9 @@
             [:div.desc
              [:h5 "Record " (str (:ts vs))]
              [:div "Size: "(pr-str (/ (.-size (:blob vs)) 1000000))  "Mb"]
-
-             [:a.download {:href (:url vs) :download "video.mp4"} "Download"]]])]]
-       [:div
-        [:h3 "Upload Video"]
-        [:form {:encType "multipart/form-data"
-                    :method "post"
-                    :action "/videos"}
-             [:input {:type "text" :name "name"}]
-             [:input {:type "file" :name "file"}]
-             [:input {:type "submit" :value "Upload"}]]]])))
+             [:a.download {:href (:url vs) :download "video.mp4"} "Download"]
+             [:br]
+             [:a.upload {:on-click #(upload-file vs)} "Upload"]]])]]])))
 
 (defmethod page/page :config
   [k]

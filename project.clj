@@ -13,7 +13,7 @@
                  [re-frisk "0.4.4" :exclusions [cljsjs/react]]
                  [binaryage/devtools "0.9.2"]
                  [hiccup "1.0.5"]
-                 ;; [cljs-http "0.1.42"]
+                 [cljs-http "0.1.42"]
                  [route-map "0.0.4"]]
 
   :plugins [[lein-environ "1.1.0"]
