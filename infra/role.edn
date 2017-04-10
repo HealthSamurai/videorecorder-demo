@@ -1,4 +1,4 @@
-{:spec {:Image "aidbox/videorecorder:d2b45d6b3d138a59403ab20d51de7e89ff2d27ee"
-        :Env ["PORT=8080" "UPLOAD_DIR=/var/videorecorder"]
+{:spec {:Image "aidbox/videorecorder:a989af3f5ee519a5b57152fc6ff59179cdd4b5ab"
+        :Env ["PORT=8080" "UPLOAD_DIR=/var/videorecorder-resource"]
         :HostConfig {:PortBindings {"8080/tcp" [{:HostPort "80"}]}
-                     :Binds ["/vat/videorecorder:/var/videorecorder"] }}}
+                     :Binds ["/var/videorecorder:/var/videorecorder-resource"] }}}
