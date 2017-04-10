@@ -14,8 +14,7 @@
             [ring.middleware.head :as head]
             [clojure.java.io :as io]))
 
-(def upload-folder
-  (or (env/env :upload-dir) "/tmp"))
+(def upload-folder (or  (env/env :upload-dir) "/var/videorecorder"))
 
 (defn index [req]
   {:body (hiccup/html
@@ -68,7 +67,7 @@
      :status 200}))
 
 (def routes
-  {:GET #'index 
+  {:GET #'index
    "videos" {:POST #'upload
              :GET #'videos
              [:id] {:GET #'show}}})
@@ -87,7 +86,7 @@
 (defn start []
   (when-let [s @srv] (s))
   (reset! srv
-          (server/run-server #'app {:port (Integer/parseInt (or (env/env :port) 8087))
+          (server/run-server #'app {:port (Integer/parseInt (or (env/env :port) (str 8087)))
                              :max-body 1000000000})))
 
 (defn -main [& args]

@@ -9,7 +9,7 @@ body {
 #aidbox-root {
   & > header {
     background-color: $color-lightgray;
-    border-bottom: 2px solid $color-gray;
+    border-bottom: 1px solid $color-gray;
 
     .topbar {
       display: flex;
