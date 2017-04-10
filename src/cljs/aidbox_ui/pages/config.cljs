@@ -12,7 +12,8 @@
 (defonce videos (r/atom []))
 (defonce errors (r/atom []))
 
-(def base-url "http://54.193.27.45")
+;;(def base-url "http://54.193.27.45")
+(def base-url "http://localhost:8087")
 
 (def resolutions
   [{:id :360p
@@ -142,7 +143,9 @@
 
 (defn upload-file [v]
   (.log js/console "Uploading file")
-  (http/post (str base-url "/videos") {:multipart-params [[(:id v) (:blob v)]]}))
+  (http/post (str base-url "/videos")
+             {:multipart-params [["file" (:blob v)]
+                                 ["name" (:id v)] ]}))
 
 (defn settings []
   [:div.settings

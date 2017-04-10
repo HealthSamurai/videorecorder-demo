@@ -27,8 +27,7 @@
             [:style "body {padding: 20px;}"]
             [:h3 "Videos"]
             [:form {:enctype "multipart/form-data"
-                    :method "post"
-                    :action "/videos"}
+                    :method "post" :action "/videos"}
              [:input {:type "text" :name "name"}]
              [:input {:type "file" :name "file"}]
              [:input {:type "submit" :value "Upload"}]]]])
@@ -36,6 +35,7 @@
    :status 200})
 
 (defn upload [req]
+  (println req)
   (let [tmp-path (.getPath (get-in req [:params :file :tempfile]))
         ext (-> (get-in req [:params :file :filename])
                 (str/split #"\.")
