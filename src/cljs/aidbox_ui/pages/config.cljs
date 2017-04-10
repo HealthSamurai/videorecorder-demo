@@ -12,8 +12,8 @@
 (defonce videos (r/atom []))
 (defonce errors (r/atom []))
 
-;;(def base-url "http://54.193.27.45")
-(def base-url "http://localhost:8087")
+(def base-url "http://54.193.27.45")
+;;(def base-url "http://localhost:8087")
 
 (def resolutions
   [{:id :360p
