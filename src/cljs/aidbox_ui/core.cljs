@@ -14,7 +14,6 @@
    [goog.history.EventType :as EventType]
    [aidbox-ui.rf :refer [reg-event-db]]
    [route-map.core :as route-map]
-   [re-frame.core :as rf]
    [aidbox-ui.pages.page :as page]
    [aidbox-ui.pages.config]
    [aidbox-ui.openid :as openid]

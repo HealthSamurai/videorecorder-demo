@@ -4,7 +4,8 @@
             [reagent.core :as r]
             [aidbox-ui.pages.page :as p]
             [aidbox-ui.pages.page :as page]
-            [cljs-http.client :as http]))
+            [cljs-http.client :as http]
+            [clojure.string :as str]))
 
 (defonce state (r/atom {:time 0
                         :devices []}))
@@ -209,26 +210,28 @@
             [:div.desc
              [:h5 "Record " (str (:ts vs))]
              [:div "Size: "(pr-str (/ (.-size (:blob vs)) 1000000))  "Mb"]
-             [:a.download {:href (str base-url "/videos/" (:id vs))
-                           :download (str (:id vs) ".avi")}
-              "Download"]
+             [:a.download {:href (:url vs) :download "video.mp4"} "Download"]
              [:br]
              [:a.upload {:on-click #(upload-file vs)} "Upload"]]])]]])))
-
 
 (defn $videos []
   (let [vs (r/atom [])]
     (go (reset! vs (<! (http/get (str base-url "/videos")))))
     (fn []
-      (let [videos (:body @vs)]
+      (let [videos (->> (:body @vs)
+                        (filter (fn [v]
+                                  (re-matches #".+\.blob" (:name v)))))]
         [:section.video-page
          [:div.videos
          (for [v videos] ^{:key (:name v)}
             [:div.item
-             [:video.preview {:src (str base-url "/" (:url v)) 
-                             :controls true}]]
-          )]]
-       ))))
+             [:video.preview {:src (str base-url "/" (:url v))
+                              :controls true}]
+             [:br]
+             (let [name (str/replace (:name v) #"\.blob" ".avi")
+                   url (str base-url "/videos/" name)]
+               [:a.download {:href url
+                             :download name} "Download"])])]]))))
 
 (defmethod page/page :config
   [k]
