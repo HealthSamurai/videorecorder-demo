@@ -146,9 +146,10 @@
 
 (defn upload-file [v]
   (.log js/console "Uploading file")
-  (http/post (str base-url "/videos")
-             {:multipart-params [["file" (:blob v)]
-                                 ["name" (:id v)] ]}))
+  (go (let [res (<! (http/post (str base-url "/videos")
+                           {:multipart-params [["file" (:blob v)]
+                                               ["name" (:id v)]]}))]
+    (.log js/console (:status res)))))
 
 (defn settings []
   [:div.settings
