@@ -3,7 +3,6 @@
   (:require [cljs.core.async :refer [<!]]
             [reagent.core :as r]
             [vendor.recordrtc]
-            [aidbox-ui.pages.page :as p]
             [aidbox-ui.pages.page :as page]
             [cljs-http.client :as http]
             [clojure.string :as str]))

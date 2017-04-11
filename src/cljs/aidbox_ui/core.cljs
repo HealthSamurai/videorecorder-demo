@@ -6,8 +6,6 @@
    [reagent.core :as reagent]
    [re-frame.core :as rf]
    [re-frisk.core :refer [enable-re-frisk!]]
-   [aidbox-ui.subs :as subs]
-   [aidbox-ui.fxs :as fxs]
    [aidbox-ui.db :as db]
    [aidbox-ui.layout :as layout]
    [goog.events :as events]
@@ -16,15 +14,10 @@
    [route-map.core :as route-map]
    [aidbox-ui.pages.page :as page]
    [aidbox-ui.pages.config]
-   [aidbox-ui.openid :as openid]
-   [aidbox-ui.cookies :as cookies]
    [aidbox-ui.sample]
-   [media-fx.core :as media]
-   [devtools.core :as devtools])
+   )
   (:import goog.History))
 
-
-;; (devtools/install!)
 
 (rf/reg-event-fx
  ::initialize

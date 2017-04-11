@@ -1,4 +1,4 @@
-{:spec {:Image "aidbox/videorecorder:f838fe65c3d2787dae86695db99ace3378024814"
+{:spec {:Image "aidbox/videorecorder:80009e6baa342fb2b64901cb578f372e4476a4c6"
         :Env ["PORT=8080"
               "UPLOAD_DIR=/var/videorecorder-resource"
               "STATIC_DIR=/var/videorecorder-static" ]
