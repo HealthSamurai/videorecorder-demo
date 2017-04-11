@@ -2,6 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs.core.async :refer [<!]]
             [reagent.core :as r]
+            [vendor.recordrtc]
             [aidbox-ui.pages.page :as p]
             [aidbox-ui.pages.page :as page]
             [cljs-http.client :as http]
@@ -15,7 +16,7 @@
 (defonce videos (r/atom []))
 (defonce errors (r/atom []))
 
-(def base-url "http://54.193.27.45")
+(def base-url "https://videorecorder.health-samurai.io")
 ;;(def base-url "http://localhost:8087")
 
 (def resolutions

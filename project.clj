@@ -88,15 +88,18 @@
                                             :provides ["vendor.codemirror"]}
                                            {:file "resources/public/vendor/markdownit/markdown-it.js"
                                             :provides ["vendor.markdownit"]}
+                                           {:file "resources/public/vendor/recordrtc/RecordRTC.min.js"
+                                            :provides ["vendor.recordrtc"]}
                                            {:file "resources/public/vendor/highlight-js/highlight.js"
                                             :provides ["vendor.highlightjs"]}]
 
                             :externs ["resources/public/vendor/codemirror/externs.js"
                                       "resources/public/vendor/highlight-js/externs.js"
+                                      "resources/public/vendor/recordrtc/externs.js"
                                       "resources/public/vendor/markdownit/markdown-it-externs.js"]
 
                             :output-to "resources/public/js/ui.js"
                             :output-dir "resources/public/js/out"
-                            :optimizations :simple
+                            :optimizations :advanced
 
                             :pretty-print  false}}}}}})

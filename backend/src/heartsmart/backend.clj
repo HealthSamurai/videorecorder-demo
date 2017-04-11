@@ -86,14 +86,13 @@
   (fn [req]
     (let [res (h req)
           res (assoc-in res [:headers "Access-Control-Allow-Origin"] "http://localhost:3000")
-          res (assoc-in res [:headers "Access-Control-Allow-Headers"] "Origin, X-Requested-With, Content-Type, Accept") 
+          res (assoc-in res [:headers "Access-Control-Allow-Headers"] "Origin, X-Requested-With, Content-Type, Accept")
           res (assoc-in res [:headers "Access-Control-Allow-Credentials"] "true") ]
-      res
-      )))
+      res)))
 
 (def app
   (-> dispatch
-      wrap-cors 
+      wrap-cors
       (file-mw/wrap-file (or (env/env :static-dir) "/var/videorecorder-static"))
       (static/wrap-resource "public")
       (ct-mw/wrap-content-type)
