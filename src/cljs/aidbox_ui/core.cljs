@@ -41,11 +41,9 @@
 (def routes
   {:.       {:. :config}
    "videos" {:. :videos}
-   "hui" {:. :hui}
    "sample" {:. :sample}})
 
 (defn- dispatch [event]
-  (.error js/console "111111111111111111")
   (let [fragment (.-token event)
         route (route-map/match [:. fragment] routes)]
     (println "routing" route)

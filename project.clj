@@ -70,6 +70,10 @@
                     {:ui {:source-paths ["src/cljs" "env/dev/cljs"]
                           :compiler
                           {:main "aidbox-ui.dev"
+                           :foreign-libs [{:file "resources/public/vendor/recordrtc/RecordRTC.js"
+                                            :provides ["vendor.recordrtc"]} ]
+                            :externs [ "resources/public/vendor/recordrtc/externs.js" ]
+
                            :asset-path "/js/out"
                            :output-to "resources/public/js/ui.js"
                            :output-dir "resources/public/js/out"
