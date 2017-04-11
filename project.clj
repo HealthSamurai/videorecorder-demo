@@ -88,7 +88,7 @@
                                             :provides ["vendor.codemirror"]}
                                            {:file "resources/public/vendor/markdownit/markdown-it.js"
                                             :provides ["vendor.markdownit"]}
-                                           {:file "resources/public/vendor/recordrtc/RecordRTC.min.js"
+                                           {:file "resources/public/vendor/recordrtc/RecordRTC.js"
                                             :provides ["vendor.recordrtc"]}
                                            {:file "resources/public/vendor/highlight-js/highlight.js"
                                             :provides ["vendor.highlightjs"]}]

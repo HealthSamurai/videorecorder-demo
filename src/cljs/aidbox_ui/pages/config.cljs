@@ -75,7 +75,7 @@
         cfg (build-rtc-config (:selected @state))
         video-track (first (.getVideoTracks stream))]
 
-    (.log js/console "applied constraints: " (.getConstraints video-track))
+    #_(.log js/console "applied constraints: " (.getConstraints video-track))
 
     (aset video "srcObject" stream)
     (.play video)
