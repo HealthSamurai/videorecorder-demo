@@ -34,17 +34,17 @@
    :status 200})
 
 (defn upload [req]
-  (println req)
   (let [tmp-path (.getPath (get-in req [:params :file :tempfile]))
         ext (-> (get-in req [:params :file :filename])
                 (str/split #"\.")
                 (last))
         file-name (str (get-in req [:params :name]) "." ext)
+        save-file-name (str/replace file-name #"\.blob" ".mp4")
         conv-file-name (str (get-in req [:params :name]) "." "avi")
-        status (shell/sh "mv" tmp-path (str upload-folder "/" file-name))
+        status (shell/sh "mv" tmp-path (str upload-folder "/" save-file-name))
         convert-status (shell/sh
                         "ffmpeg" "-i"
-                        (str upload-folder "/" file-name)
+                        (str upload-folder "/" save-file-name)
                         "-an" "-vcodec" "rawvideo" "-y"
                         (str upload-folder "/" conv-file-name))]
     {:body    (json/generate-string

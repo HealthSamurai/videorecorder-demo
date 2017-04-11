@@ -16,7 +16,7 @@
 (defonce errors (r/atom []))
 
 (def base-url "https://videorecorder.health-samurai.io")
-;;(def base-url "http://localhost:8087")
+;;(def base-url "http://localhost:8087"))
 
 (def resolutions
   [{:id :360p
@@ -44,12 +44,11 @@
    {:id "5"
     :frameRate {:exact 5}}])
 
-(def bitrates [{:id "8000000000" :text "1 GB bps"}
-               {:id "800000000" :text "100 MB bps"}
+(def bitrates [{:id "800000000" :text "100 MB bps"}
+               {:id "80000000" :text "10 MB bps" :default true}
                {:id "8000000" :text "1 MB bps"}
                {:id "800000" :text "100 KB bps"}
-               {:id "8000" :text "1 KB bps"}
-               {:id "800"  :text "100 Bytes bps"}])
+               {:id "8000" :text "1 KB bps"} ])
 
 (js/setInterval (fn []
                   (when (= :in-progress (:phase @state))
@@ -87,8 +86,7 @@
 
 (defn device-constraints [cfg]
   (cond-> {}
-      (:resolution cfg) (merge (dissoc (:resolution cfg) :id :text))
-      (:frame-rate cfg) (merge (dissoc (:frame-rate cfg) :id))))
+      (:resolution cfg) (merge (dissoc (:resolution cfg) :id :text))))
 
 (defn start-recording []
   (let [cfg (:selected @state)
@@ -123,10 +121,14 @@
                                         :blob (.getBlob @recorder)
                                         :id (name (gensym))}))))
 
-(defn radio-group [args]
+(defn radio-group [{opts :opts path :path :as args}]
   (let [do-selection (fn [x path]
                        (.log js/console "select" path x)
                        (swap! state assoc-in path x))]
+    (doseq [x opts]
+      (if (:default x)
+        (swap! state assoc-in path x)))
+
     (fn [{path :path opts :opts title :title}]
       (let [st @state
             cur (get-in st path)]
@@ -146,9 +148,11 @@
 
 (defn upload-file [v]
   (.log js/console "Uploading file")
+
   (go (let [res (<! (http/post (str base-url "/videos")
                            {:multipart-params [["file" (:blob v)]
-                                               ["name" (:id v)]]}))]
+                                               ["name" (str (:id v) "_" (rand 100))]]}))]
+    (js/alert "Video uploaded")
     (.log js/console (:status res)))))
 
 (defn settings []
@@ -156,6 +160,7 @@
    [:section.video-page
     [:pre {:style {:float "right"}}
      (last @errors)]
+
     [radio-group {:title "Choose Device"
                   :path [:selected :device]
                   :opts (->> (:devices @state)
@@ -169,7 +174,7 @@
     [radio-group {:title "Compression"
                   :path [:selected :codec]
                   :opts [{:id "vp8" :text "vp8"}
-                         {:id "vp9" :text "vp9"}
+                         {:id "vp9" :text "vp9" :default true}
                          {:id "h264" :text "h264"}
                          {:id "whammy" :text "whammy"}]}]
 
@@ -177,11 +182,6 @@
                   :path [:selected :resolution]
                   :opts (mapv wrap-attrs
                               resolutions)}]
-
-    [radio-group {:title "Frame Rate"
-                  :path [:selected :frame-rate]
-                  :opts (mapv wrap-attrs
-                              frame-rates)}]
 
     [radio-group {:title "Bitrate"
                   :path [:selected :bit-rate]
@@ -211,9 +211,15 @@
             [:div.desc
              [:h5 "Record " (str (:ts vs))]
              [:div "Size: "(pr-str (/ (.-size (:blob vs)) 1000000))  "Mb"]
-             [:a.download {:href (:url vs) :download "video.mp4"} "Download"]
+
              [:br]
-             [:a.upload {:on-click #(upload-file vs)} "Upload"]]])]]])))
+             [:div.btn.btn-sm.btn-secondary
+              [:a {:title "Download video"
+                   :href (:url vs) :download "video.mp4"} "Download"]]
+
+             [:div.btn.btn-sm.btn-primary
+              {:on-click #(upload-file vs)
+               :title "Upload video to server" } "Upload"]]])]]])))
 
 (defn $videos []
   (let [vs (r/atom [])]
@@ -221,18 +227,25 @@
     (fn []
       (let [videos (->> (:body @vs)
                         (filter (fn [v]
-                                  (re-matches #".+\.blob" (:name v)))))]
+                                  (re-matches #".+\.mp4" (:name v)))))]
         [:section.video-page
          [:div.videos
-         (for [v videos] ^{:key (:name v)}
+          (for [v videos] ^{:key (:name v)}
             [:div.item
-             [:video.preview {:src (str base-url "/" (:url v))
-                              :controls true}]
-             [:br]
-             (let [name (str/replace (:name v) #"\.blob" ".avi")
-                   url (str base-url "/videos/" name)]
-               [:a.download {:href url
-                             :download name} "Download"])])]]))))
+             [:video.preview.large {:src (str base-url "/" (:url v))
+                                    :controls true}]
+             [:div.desc
+              (let [name (str/replace (:name v) #"\.blob" ".mp4")
+                    url (str base-url  (:url v))]
+                [:div.btn.btn-sm.btn-secondary
+                 [:a.download {:href url
+                              :download name} "Download original .mp4"]])
+
+              (let [name (str/replace (:name v) #"\.blob" ".avi")
+                    url (str base-url "/videos/" name)]
+                [:div.btn.btn-sm.btn-secondary
+                 [:a.download {:href url
+                              :download name} "Download .avi"]])]])]]))))
 
 (defmethod page/page :config
   [k]

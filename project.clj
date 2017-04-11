@@ -63,7 +63,7 @@
                    :plugins [[lein-figwheel "0.5.10-SNAPSHOT"]
                              [cider/cider-nrepl "0.14.0"]]
 
-                   :env {:dev true}
+                   :env {:dev true }
 
                    :cljsbuild
                    {:builds
