@@ -15,8 +15,8 @@
 (defonce videos (r/atom []))
 (defonce errors (r/atom []))
 
-;;(def base-url "https://videorecorder.health-samurai.io")
-(def base-url "http://localhost:8087")
+(def base-url "https://videorecorder.health-samurai.io")
+;;(def base-url "http://localhost:8087")
 
 (def resolutions
   [{:id :360p
@@ -218,32 +218,43 @@
 
 (defn controls [{id :name :as v}]
   (let [frame (r/atom 1)
+        duration (r/atom 0)
         snaps (r/atom [])
         interval (/ 1 30)
         canvas-id (str "canvas_" id)
+        getvideo #(.getElementById js/document id)
+        set-time (fn [f]
+                   (let [v (getvideo)]
+                     (aset v "currentTime" (* interval f))
+                     (reset! frame f)))
         snap (fn [frame]
                (let [video (.getElementById js/document id)
                      time-from (* interval frame)
                      canvas (.createElement js/document "canvas" )
-                     context (.getContext  canvas "2d")
+                     context (.getContext canvas "2d")
                      w (.-videoWidth video) h (.-videoHeight video) ]
                  (aset video "oncanplay"
                        (fn []
-                         (.warn js/console "!!!!!!!!!!!!!!11")
                          (.setAttribute canvas "width" w)
                          (.setAttribute canvas "height" h )
                          (.drawImage context video 0 0 w h)
-                         (swap! snaps conj (.toDataURL canvas "image/png")) ))
-
-                 (aset video "currentTime"  time-from)
-                 ) ) ]
+                         (swap! snaps conj (.toDataURL canvas "image/png"))
+                         (aset video "oncanplay" false)))
+                 (aset video "currentTime"  time-from)) ) ]
     (fn []
       [:div.controls
+       [:video.preview.large {:id id
+                              :onLoadedMetadata #(reset! duration (.-duration (getvideo)) )
+                              :crossOrigin "Anonymous"
+                              :type "video/mp4"
+                              :src (str base-url  (:url v))
+                              :controls true} ]
        [:h4 (str "Frame: " @frame)]
-       [:button.btn.btn-secondary.btn-sm {:on-click #(swap! frame dec)} "<" ]
-       [:input.fps {:on-change #(reset! frame (int (-> % .-target .-value)))
-                    :type "range" :value @frame :min 1 :max (* 8 30) :step 1}]
-       [:button.btn.btn-secondary.btn-sm {:on-click #(swap! frame inc)} ">"]
+       [:button.btn.btn-secondary.btn-sm {:on-click #(set-time (dec @frame))} "<" ]
+       [:input.fps {:on-change (fn [e] (set-time (int (-> e .-target .-value))))
+
+                    :type "range" :value @frame :min 1 :max (* (or @duration 1) 30) :step 1}]
+       [:button.btn.btn-secondary.btn-sm {:on-click #(set-time (inc @frame))} ">"]
        [:br]
        [:br]
        [:br]
@@ -270,11 +281,6 @@
          [:div.videos
           (for [{name :name :as v} videos] ^{:key (:name v)}
               [:div.item
-               [:video.preview.large {:id name
-                                      :crossOrigin "Anonymous"
-                                      :type "video/mp4"
-                                      :src (str base-url  (:url v))
-                                      :controls true} ]
 
                [:div.desc
                 (let [name (:name v)
@@ -284,14 +290,12 @@
 
                 (let [name (str/replace (:name v) #"\.mp4" ".avi")
                       url (str base-url "/videos/" name)]
-                  [:a.btn.btn-sm.btn-secondary.download {:href url
-                                                         :download name} "Download .avi"])
+                  [:a.btn.btn-sm.btn-secondary.download {:href url :download name} "Download .avi"])
                 [:br]
                 [:br]
                 [:br]
-                [controls v]
-
-                ]])]]))))
+                [controls v]]])
+          ]]))))
 
 (defmethod page/page :config
   [k]
