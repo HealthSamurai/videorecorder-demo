@@ -15,8 +15,8 @@
 (defonce videos (r/atom []))
 (defonce errors (r/atom []))
 
-(def base-url "https://videorecorder.health-samurai.io")
-;;(def base-url "http://localhost:8087")
+;;(def base-url "https://videorecorder.health-samurai.io")
+(def base-url "http://localhost:8087")
 
 (def resolutions
   [{:id :360p
@@ -216,36 +216,48 @@
               {:on-click #(upload-file vs)
                :title "Upload video to server" } "Upload"]]])]]])))
 
-(defn controls [id]
-  (let [pos (r/atom 0)
+(defn controls [{id :name :as v}]
+  (let [frame (r/atom 1)
         snaps (r/atom [])
+        interval (/ 1 30)
         canvas-id (str "canvas_" id)
-        snap (fn []
+        snap (fn [frame]
                (let [video (.getElementById js/document id)
+                     time-from (* interval frame)
                      canvas (.createElement js/document "canvas" )
                      context (.getContext  canvas "2d")
                      w (.-videoWidth video) h (.-videoHeight video) ]
-                 (.setAttribute canvas "width" w)
-                 (.setAttribute canvas "height" h )
-                 (.drawImage context video 0 0 w h)
-                 (swap! snaps conj (.toDataURL canvas "image/png"))) ) ]
+                 (aset video "oncanplay"
+                       (fn []
+                         (.warn js/console "!!!!!!!!!!!!!!11")
+                         (.setAttribute canvas "width" w)
+                         (.setAttribute canvas "height" h )
+                         (.drawImage context video 0 0 w h)
+                         (swap! snaps conj (.toDataURL canvas "image/png")) ))
+
+                 (aset video "currentTime"  time-from)
+                 ) ) ]
     (fn []
       [:div.controls
-       [:h4 (str "Frame: " @pos)]
-       [:button.btn.btn-secondary.btn-sm {:on-click #(swap! pos dec)} "<" ]
-       [:input.fps {:on-change #(reset! pos (-> % .-target .-value))
-                    :type "range" :min 1 :max (* 60 30) :step 1}]
-       [:button.btn.btn-secondary.btn-sm {:on-click #(swap! pos inc)} ">"]
+       [:h4 (str "Frame: " @frame)]
+       [:button.btn.btn-secondary.btn-sm {:on-click #(swap! frame dec)} "<" ]
+       [:input.fps {:on-change #(reset! frame (int (-> % .-target .-value)))
+                    :type "range" :value @frame :min 1 :max (* 8 30) :step 1}]
+       [:button.btn.btn-secondary.btn-sm {:on-click #(swap! frame inc)} ">"]
        [:br]
        [:br]
        [:br]
-       [:button.btn.btn-primary {:on-click snap} "Capture frame"]
+       [:button.btn.btn-primary {:on-click #(snap @frame)} "Capture frame"]
        (for [url @snaps] ^{:key (rand 100)}
          [:div
+          [:br]
           [:a {:href url :download (str (rand 100) ".png") }
+           [:div "Click to download"]
            [:img.snap {:crossOrigin "Anonymous" :src url}]]])
        ]))
   )
+
+
 
 (defn $videos []
   (let [vs (r/atom [])]
@@ -277,7 +289,7 @@
                 [:br]
                 [:br]
                 [:br]
-                [controls name]
+                [controls v]
 
                 ]])]]))))
 
