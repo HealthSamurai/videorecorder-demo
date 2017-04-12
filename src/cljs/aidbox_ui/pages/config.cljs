@@ -23,8 +23,7 @@
     :width {:exact 480}
     :height {:exact 360}}
    {:id :480p
-    :width {:exact 640}
-    :height {:exact 480}}
+    :width {:exact 640} :height {:exact 480}}
    {:id :720p
     :wigth {:exact 1280}
     :height {:exact 720}}
@@ -86,15 +85,15 @@
 
 (defn device-constraints [cfg]
   (cond-> {}
-      (:resolution cfg) (merge (dissoc (:resolution cfg) :id :text))))
+    (:resolution cfg) (merge (dissoc (:resolution cfg) :id :text))))
 
 (defn start-recording []
   (let [cfg (:selected @state)
         d (:device cfg)
         constr {:audio false
                 :video (merge
-                        {:deviceId (if-let [id (and d (:id d))] {:exact id} nil)}
-                        (device-constraints cfg))}]
+                         {:deviceId (if-let [id (and d (:id d))] {:exact id} nil)}
+                         (device-constraints cfg))}]
 
     (.log js/console "Media constr" (clj->js constr))
 
@@ -107,7 +106,7 @@
                                                 (.-constraintName err))]
                                     (conj st
                                           (str "Device does not support selected " msg))))
-                                  err)
+                         err)
                   (.log js/console err))))))
 
 (defn stop-recording []
@@ -150,10 +149,10 @@
   (.log js/console "Uploading file")
 
   (go (let [res (<! (http/post (str base-url "/videos")
-                           {:multipart-params [["file" (:blob v)]
-                                               ["name" (str (:id v) "_" (rand 100))]]}))]
-    (js/alert "Video uploaded")
-    (.log js/console (:status res)))))
+                               {:multipart-params [["file" (:blob v)]
+                                                   ["name" (str (:id v) "_" (rand 100))]]}))]
+        (js/alert "Video uploaded")
+        (.log js/console (:status res)))))
 
 (defn settings []
   [:div.settings
@@ -213,13 +212,14 @@
              [:div "Size: "(pr-str (/ (.-size (:blob vs)) 1000000))  "Mb"]
 
              [:br]
-             [:div.btn.btn-sm.btn-secondary
-              [:a {:title "Download video"
-                   :href (:url vs) :download "video.mp4"} "Download"]]
+
+             [:a.btn.btn-sm.btn-secondary {:title "Download video"
+                                           :href (:url vs) :download "video.mp4"} "Download"]
 
              [:div.btn.btn-sm.btn-primary
               {:on-click #(upload-file vs)
                :title "Upload video to server" } "Upload"]]])]]])))
+
 
 (defn $videos []
   (let [vs (r/atom [])]
@@ -230,22 +230,23 @@
                                   (re-matches #".+\.mp4" (:name v)))))]
         [:section.video-page
          [:div.videos
-          (for [v videos] ^{:key (:name v)}
+          (for [{name :name :as v} videos] ^{:key (:name v)}
             [:div.item
-             [:video.preview.large {:src (str base-url "/" (:url v))
-                                    :controls true}]
-             [:div.desc
-              (let [name (str/replace (:name v) #"\.blob" ".mp4")
-                    url (str base-url  (:url v))]
-                [:div.btn.btn-sm.btn-secondary
-                 [:a.download {:href url
-                              :download name} "Download original .mp4"]])
+             [:video.preview.large {:id name
+                                    :type "video/mp4"
+                                    :src (str base-url  (:url v))
+                                    :controls true} ]
 
-              (let [name (str/replace (:name v) #"\.blob" ".avi")
+             [:div.desc
+              (let [name (:name v)
+                    url (str base-url  (:url v))]
+                [:a.btn.btn-sm.btn-secondary.download {:href url
+                                                       :download name} "Download original .mp4"])
+
+              (let [name (str/replace (:name v) #"\.mp4" ".avi")
                     url (str base-url "/videos/" name)]
-                [:div.btn.btn-sm.btn-secondary
-                 [:a.download {:href url
-                              :download name} "Download .avi"]])]])]]))))
+                [:a.btn.btn-sm.btn-secondary.download {:href url
+                                                       :download name} "Download .avi"])]])]]))))
 
 (defmethod page/page :config
   [k]

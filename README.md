@@ -1,7 +1,7 @@
 ## VideoRecorder
 =============
 
-[Videorecorder demo page](https://healthsamurai.github.io/videorecorder-demo/)
+[Videorecorder demo page](https://videorecorder.health-samurai.io/index.html)
 
 
 [![Build Status](https://travis-ci.com/HealthSamurai/videorecorder-demo.svg?token=BDkPmPwZvvYHsy2jdxs9&branch=master)](https://travis-ci.com/HealthSamurai/videorecorder-demo)
