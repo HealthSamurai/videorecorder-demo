@@ -44,8 +44,8 @@
     :frameRate {:exact 5}}])
 
 (def bitrates [{:id "800000000" :text "100 MB bps"}
-               {:id "80000000" :text "10 MB bps" :default true}
-               {:id "8000000" :text "1 MB bps"}
+               {:id "80000000" :text "10 MB bps"}
+               {:id "8000000" :text "1 MB bps"  :default true}
                {:id "800000" :text "100 KB bps"}
                {:id "8000" :text "1 KB bps"} ])
 
@@ -169,8 +169,8 @@
     [radio-group {:title "Compression"
                   :path [:selected :codec]
                   :opts [{:id "vp8" :text "vp8"}
-                         {:id "vp9" :text "vp9" :default true}
-                         {:id "h264" :text "h264"}
+                         {:id "vp9" :text "vp9"}
+                         {:id "h264" :text "h264" :default true}
                          {:id "whammy" :text "whammy"}]}]
 
     [radio-group {:title "Resolution"
