@@ -246,7 +246,13 @@
               (let [name (str/replace (:name v) #"\.mp4" ".avi")
                     url (str base-url "/videos/" name)]
                 [:a.btn.btn-sm.btn-secondary.download {:href url
-                                                       :download name} "Download .avi"])]])]]))))
+                                                       :download name} "Download .avi"])
+              [:br]
+              [:br]
+              [:br]
+              [:input {:type "range" :min 1 :max (* 60 30) :step 1}]
+
+              ]])]]))))
 
 (defmethod page/page :config
   [k]
