@@ -88,7 +88,7 @@
 (defn start-recording []
   (let [cfg (:selected @state)
         d (:device cfg)
-        constr {:audio true
+        constr {:audio false
                 :video (merge
                          {:deviceId (if-let [id (and d (:id d))] {:exact id} nil)}
                          (device-constraints cfg))}]
@@ -220,15 +220,15 @@
   (let [pos (r/atom 0)
         snaps (r/atom [])
         canvas-id (str "canvas_" id)
-        w 640 h 480
         snap (fn []
                (let [video (.getElementById js/document id)
                      canvas (.createElement js/document "canvas" )
-                     context (.getContext  canvas "2d") ]
-                 (.setAttribute canvas "width" (.-videoWidth video))
-                 (.setAttribute canvas "height" (.-videoHeight video))
+                     context (.getContext  canvas "2d")
+                     w (.-videoWidth video) h (.-videoHeight video) ]
+                 (.setAttribute canvas "width" w)
+                 (.setAttribute canvas "height" h )
                  (.drawImage context video 0 0 w h)
-                 (swap! snaps conj canvas)) ) ]
+                 (swap! snaps conj (.toDataURL canvas "image/png"))) ) ]
     (fn []
       [:div.controls
        [:h4 (str "Frame: " @pos)]
@@ -240,10 +240,10 @@
        [:br]
        [:br]
        [:button.btn.btn-primary {:on-click snap} "Capture frame"]
-       (for [s @snaps] ^{:key (rand 100)}
-         #_(.log js/console s)
-         [:img {:crossOrigin "Anonymous"
-                :src (.toDataURL s "image/png")}])
+       (for [url @snaps] ^{:key (rand 100)}
+         [:div
+          [:a {:href url :download (str (rand 100) ".png") }
+           [:img.snap {:crossOrigin "Anonymous" :src url}]]])
        ]))
   )
 
@@ -259,6 +259,7 @@
           (for [{name :name :as v} videos] ^{:key (:name v)}
               [:div.item
                [:video.preview.large {:id name
+                                      :crossOrigin "Anonymous"
                                       :type "video/mp4"
                                       :src (str base-url  (:url v))
                                       :controls true} ]
