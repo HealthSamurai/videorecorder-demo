@@ -88,7 +88,7 @@
 (defn start-recording []
   (let [cfg (:selected @state)
         d (:device cfg)
-        constr {:audio false
+        constr {:audio true
                 :video (merge
                          {:deviceId (if-let [id (and d (:id d))] {:exact id} nil)}
                          (device-constraints cfg))}]
@@ -216,6 +216,36 @@
               {:on-click #(upload-file vs)
                :title "Upload video to server" } "Upload"]]])]]])))
 
+(defn controls [id]
+  (let [pos (r/atom 0)
+        snaps (r/atom [])
+        canvas-id (str "canvas_" id)
+        w 640 h 480
+        snap (fn []
+               (let [video (.getElementById js/document id)
+                     canvas (.createElement js/document "canvas" )
+                     context (.getContext  canvas "2d") ]
+                 (.setAttribute canvas "width" (.-videoWidth video))
+                 (.setAttribute canvas "height" (.-videoHeight video))
+                 (.drawImage context video 0 0 w h)
+                 (swap! snaps conj canvas)) ) ]
+    (fn []
+      [:div.controls
+       [:h4 (str "Frame: " @pos)]
+       [:button.btn.btn-secondary.btn-sm {:on-click #(swap! pos dec)} "<" ]
+       [:input.fps {:on-change #(reset! pos (-> % .-target .-value))
+                    :type "range" :min 1 :max (* 60 30) :step 1}]
+       [:button.btn.btn-secondary.btn-sm {:on-click #(swap! pos inc)} ">"]
+       [:br]
+       [:br]
+       [:br]
+       [:button.btn.btn-primary {:on-click snap} "Capture frame"]
+       (for [s @snaps] ^{:key (rand 100)}
+         #_(.log js/console s)
+         [:img {:crossOrigin "Anonymous"
+                :src (.toDataURL s "image/png")}])
+       ]))
+  )
 
 (defn $videos []
   (let [vs (r/atom [])]
@@ -227,28 +257,28 @@
         [:section.video-page
          [:div.videos
           (for [{name :name :as v} videos] ^{:key (:name v)}
-            [:div.item
-             [:video.preview.large {:id name
-                                    :type "video/mp4"
-                                    :src (str base-url  (:url v))
-                                    :controls true} ]
+              [:div.item
+               [:video.preview.large {:id name
+                                      :type "video/mp4"
+                                      :src (str base-url  (:url v))
+                                      :controls true} ]
 
-             [:div.desc
-              (let [name (:name v)
-                    url (str base-url  (:url v))]
-                [:a.btn.btn-sm.btn-secondary.download {:href url
-                                                       :download name} "Download original .mp4"])
+               [:div.desc
+                (let [name (:name v)
+                      url (str base-url  (:url v))]
+                  [:a.btn.btn-sm.btn-secondary.download {:href url
+                                                         :download name} "Download original .mp4"])
 
-              (let [name (str/replace (:name v) #"\.mp4" ".avi")
-                    url (str base-url "/videos/" name)]
-                [:a.btn.btn-sm.btn-secondary.download {:href url
-                                                       :download name} "Download .avi"])
-              [:br]
-              [:br]
-              [:br]
-              [:input {:type "range" :min 1 :max (* 60 30) :step 1}]
+                (let [name (str/replace (:name v) #"\.mp4" ".avi")
+                      url (str base-url "/videos/" name)]
+                  [:a.btn.btn-sm.btn-secondary.download {:href url
+                                                         :download name} "Download .avi"])
+                [:br]
+                [:br]
+                [:br]
+                [controls name]
 
-              ]])]]))))
+                ]])]]))))
 
 (defmethod page/page :config
   [k]
