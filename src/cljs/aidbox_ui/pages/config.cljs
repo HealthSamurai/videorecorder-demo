@@ -16,7 +16,7 @@
 (defonce errors (r/atom []))
 
 (def base-url "https://videorecorder.health-samurai.io")
-;;(def base-url "http://localhost:8087"))
+;;(def base-url "http://localhost:8087")
 
 (def resolutions
   [{:id :360p
@@ -72,8 +72,6 @@
   (let [video (.getElementById js/document "video")
         cfg (build-rtc-config (:selected @state))
         video-track (first (.getVideoTracks stream))]
-
-    #_(.log js/console "applied constraints: " (.getConstraints video-track))
 
     (aset video "srcObject" stream)
     (.play video)
@@ -146,8 +144,6 @@
   (assoc v :text (name (:id v))))
 
 (defn upload-file [v]
-  (.log js/console "Uploading file")
-
   (go (let [res (<! (http/post (str base-url "/videos")
                                {:multipart-params [["file" (:blob v)]
                                                    ["name" (str (:id v) "_" (rand 100))]]}))]

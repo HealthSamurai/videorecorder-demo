@@ -41,7 +41,10 @@
         file-name (str (get-in req [:params :name]) "." ext)
         save-file-name (str/replace file-name #"\.blob" ".mp4")
         conv-file-name (str (get-in req [:params :name]) "." "avi")
-        status (shell/sh "mv" tmp-path (str upload-folder "/" save-file-name))
+        status (shell/sh
+                "ffmpeg" "-i"
+                tmp-path
+                (str upload-folder "/" save-file-name))
         convert-status (shell/sh
                         "ffmpeg" "-i"
                         (str upload-folder "/" save-file-name)
@@ -110,4 +113,3 @@
 (comment
   (start)
   )
-
